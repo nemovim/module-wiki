@@ -15,7 +15,6 @@
   },
   "homepage": "https://github.com/nemovim/ken-wiki#readme",
   "dependencies": {
-    "crypto": "^1.0.1",
     "ken-markup": "^0.2.0",
     "mongoose": "^7.4.0"
   }
