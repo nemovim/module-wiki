@@ -5,7 +5,20 @@
     let author;
     let comment;
 
-    async function submit() {
+    async function readDoc() {
+        const res = await fetch('/api/read', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+            }),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        console.log(await res.json());
+    }
+
+    async function writeDoc() {
         const res = await fetch('/api/write', {
             method: 'POST',
             body: JSON.stringify({
@@ -29,5 +42,10 @@
     <input type="text" bind:value={content}>
     <input type="text" bind:value={author}>
     <input type="text" bind:value={comment}>
-    <button on:click={submit}>submit</button>
+    <button on:click={writeDoc}>write</button>
+</form>
+
+<form>
+    <input type="text" bind:value={title}>
+    <button on:click={readDoc}>read</button>
 </form>
