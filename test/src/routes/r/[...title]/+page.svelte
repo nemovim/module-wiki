@@ -1,4 +1,7 @@
 <script>
+
+    let doc;
+
 	let title;
 	let content;
 	let author;
@@ -8,32 +11,35 @@
 	export let data;
 
 	$: {
-		console.log(data);
 
-		title = data.fullTitle;
-		if (data.history === -1) {
+        doc = JSON.parse(data.doc);
+
+		console.log(doc);
+
+		title = doc.fullTitle;
+		if (doc.history === -1) {
 			// Not exist.
 			content = '존재하지 않는 문서입니다.';
             history = 0;
 		} else {
-			author = data.author;
-			content = data.html;
-			comment = data.comment;
-			history = data.history;
+			author = doc.author;
+			content = doc.html;
+			comment = doc.comment;
+			history = doc.history;
 		}
 	}
 
 	function write() {
-		location.href = `/w/${data.fullTitle}`;
+		location.href = `/w/${doc.fullTitle}`;
 	}
 
 	function checkHistory() {
-		location.href = `/h/${data.fullTitle}`;
+		location.href = `/h/${doc.fullTitle}`;
 	}
 
 </script>
 
-<div id="headerDiv">
+<article id="headerArticle">
 	<div id="titleDiv">
 		<h1 id="docTitle">{title}</h1>
 		<span id="docHistory">{history}번째 수정판</span>
@@ -43,14 +49,15 @@
 		<button on:click={write}>편집</button>
 		<button on:click={checkHistory}>역사</button>
 	</div>
-</div>
+</article>
 
 <article id="mainArticle" class="kmu" contenteditable="false" bind:innerHTML={content} />
 
 <style lang="scss">
-	@import 'kmu.scss';
 
-	#headerDiv {
+    @import '../../kmu.scss';
+
+	#headerArticle {
 		display: flex;
 		align-items: center;
 		padding: 1rem;
@@ -67,7 +74,4 @@
         top: -1rem;
     }
 
-	#mainArticle {
-		// padding: 1rem 1.5rem;
-	}
 </style>

@@ -1,7 +1,10 @@
 import wiki from '$lib/server/wiki.js';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 
-export async function POST({ request }) {
-    let { title, content, author, comment } = await request.json();
-    return json(await wiki.writeDoc(title, content, author, comment));
+export async function POST({ request, locals }) {
+	if (!locals.session) {
+		throw error(401, 'Unauthorized');
+	}
+    let { fullTitle, content, author, comment } = await request.json();
+    return json(await wiki.writeDoc(fullTitle, content, author, comment));
 }

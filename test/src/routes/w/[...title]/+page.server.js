@@ -1,19 +1,26 @@
-export async function load({ params, fetch }) {
-	console.log(params);
-	let doc = await readDoc(params.title, fetch);
+import wiki from '$lib/server/wiki.js';
+import { redirect, error } from '@sveltejs/kit';
+
+export async function load({ params }) {
+	let doc = await wiki.readDoc(params.title);
 	doc.fullTitle = params.title;
-	return doc;
+	return {
+		doc: JSON.stringify(doc),
+	}
 }
 
-async function readDoc(fullTitle, fetch) {
-	const res = await fetch('/api/read', {
-		method: 'POST',
-		body: JSON.stringify({
-			fullTitle
-		}),
-		headers: {
-			'content-type': 'application/json'
+export const actions = {
+	default: async ({ request, locals, params }) => {
+
+		if (!locals.session) {
+			throw error(401, 'Unauthorized');
 		}
-	});
-	return await res.json();
+
+		const DATA = await request.formData();
+
+		const CONTENT = DATA.get('content').replaceAll(/\r\n/g, '\n');
+		await wiki.writeDoc(params.title, CONTENT, '', DATA.get('comment'));
+
+		throw redirect(303, encodeURI('/r/' + params.title));
+	}
 }

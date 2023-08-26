@@ -4,21 +4,52 @@
 		><span style="color: rgb(21, 192, 242);">N</span><span>-WIKI</span>
 	</a>
 </header>
+
+<div id="mainDiv">
+
 <section id="mainSection">
 	<slot />
 </section>
+
+<aside id="mainAside">
+    <aside>
+        <p>User Info</p>
+    </aside>
+    <aside>
+        <p>Recently Edited</p>
+    </aside>
+</aside>
+
+</div>
+
 <footer>
 	<p>Developed by nemovim</p>
 </footer>
 
 <style lang="scss">
-	#mainSection {
+    #mainDiv {
+        display: flex;
+        justify-content: center;
+    }
+
+    @mixin main {
 		margin: 1rem;
 		height: -webkit-fill-available;
 		padding: 1.5rem 2rem;
 		border: solid grey 0.1rem;
 		background-color: white;
+    }
+
+	#mainSection {
+        @include main;
+        max-width: 40rem;
+        width: -webkit-fill-available;
 	}
+
+    #mainAside > aside {
+        @include main;
+        margin-left: 0;
+    }
 
 	@mixin xer {
 		position: relative;
