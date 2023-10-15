@@ -1,6 +1,5 @@
-import './global.scss';
-import './classes.scss';
-import './kmu.scss';
+import '$lib/style/global.scss';
+import '$lib/style/classes.scss';
 
 // import { error } from '@sveltejs/kit';
 

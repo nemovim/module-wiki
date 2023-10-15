@@ -27,6 +27,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"ken-auth": "file:../../ken-auth",
 		"ken-wiki": "file:..",
 		"sass": "^1.65.1"
 	}

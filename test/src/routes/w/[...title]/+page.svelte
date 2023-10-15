@@ -1,4 +1,6 @@
 <script>
+	import MainSection from '../../mainSection.svelte';
+
 	let doc;
 
 	let title;
@@ -8,7 +10,6 @@
 	let history;
 
 	export let data;
-
 
 	doc = JSON.parse(data.doc);
 	console.log(doc);
@@ -34,78 +35,56 @@
 		const RES = await fetch('/api/preview', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				content,
+				content
 			})
-		})
+		});
 
 		previewContent = await RES.json();
 	}
-
 </script>
 
-<article id="headerArticle">
-	<div id="titleDiv">
-		<h1 id="docTitle">{title}</h1>
-		<span id="docHistory">{history}번째 수정판</span>
-	</div>
-
-	<div id="btnDiv">
+<MainSection {title} {history}>
+	<span slot="btns">
 		<button on:click={read}>취소</button>
 		<button><label for="saveSubmitBtn">저장</label></button>
-	</div>
-</article>
+	</span>
 
-<article id="mainArticle">
-	<form method="POST">
-		<textarea id="docContent" name="content" contenteditable="true" bind:value={content}></textarea>
-		<input id="commentInput" name="comment" placeholder="comment">
-		<button id="saveSubmitBtn" class="hidden"></button>
-	</form>
-	<button id="previewBtn" on:click={preview}>미리보기</button>
-	<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewContent}></div>
-</article>
+	<span slot="article">
+		<article id="mainArticle">
+			<form method="POST">
+				<textarea id="docContent" name="content" contenteditable="true" bind:value={content} />
+				<input id="commentInput" name="comment" placeholder="comment" />
+				<button id="saveSubmitBtn" class="hidden" />
+			</form>
+			<button id="previewBtn" on:click={preview}>미리보기</button>
+			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewContent} />
+		</article>
+	</span>
+</MainSection>
 
 <style lang="scss">
-
-	@import '../../kmu.scss';
-
-	#headerArticle {
-		display: flex;
-		align-items: center;
-		padding: 1rem;
-		justify-content: space-between;
-	}
-
-	#docTitle {
-		font-size: 2.5rem;
-
-    }
-
-    #docHistory {
-        position: relative;
-        top: -1rem;
-    }
+	@import '../../../lib/style/kmu.scss';
 
 	#docContent {
 		width: -webkit-fill-available;
-		height: 50vh ;
+		height: 50vh;
 		font-size: 1rem;
-		padding: .8rem 1rem;
+		padding: 0.8rem 1rem;
 		resize: vertical;
 	}
 
 	#commentInput {
 		width: -webkit-fill-available;
-		font-size: .8rem;
-		padding: .2rem .5rem;
+		font-size: 0.8rem;
+		padding: 0.2rem 0.5rem;
 	}
 
 	#previewBtn {
 		width: -webkit-fill-available;
-		margin-top: .5rem;
+		margin-top: 0.5rem;
 	}
 
 	#previewDiv {
