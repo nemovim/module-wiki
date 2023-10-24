@@ -1,8 +1,43 @@
+<script>
+	import MiniSearch from 'minisearch';
+	import Hangul from 'hangul-js';
+	import HangulSearcher from 'hangul-search';
+
+
+	let searchTitle = '';
+
+	let infoArr = [];
+
+	let hangulSearcher;
+
+	async function getInfoArr() {
+		let data = await fetch('/api/info');
+		infoArr = await data.json();
+		hangulSearcher = new HangulSearcher(infoArr);
+	}
+
+	function suggest(title) {
+		console.log(hangulSearcher.autoComplete(title));
+	}
+
+	function checkEnter(e) {
+		if (e.key === 'Enter') {
+			search(searchTitle);
+		}
+	}
+
+	function search(title) {
+		location.href = '/s/' + encodeURI(title);
+	}
+
+</script>
 <header>
 	<a href="/">
 		<span style="color: rgb(0, 50, 104);">K</span><span style="color: rgb(0, 132, 202);">E</span
 		><span style="color: rgb(21, 192, 242);">N</span><span>-WIKI</span>
 	</a>
+		<input type="text" on:focus={getInfoArr} bind:value={searchTitle} on:input={suggest(searchTitle)} on:keydown={checkEnter}>
+		<button on:click={search(searchTitle)}>Search!</button>
 </header>
 
 <div id="mainDiv">
