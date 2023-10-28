@@ -27,10 +27,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"hangul-js": "^0.2.6",
 		"ken-auth": "file:../../ken-auth",
 		"ken-wiki": "file:..",
-		"minisearch": "^6.1.0",
 		"sass": "^1.65.1"
 	}
 }

@@ -31,7 +31,7 @@
 
     #docHistory {
         position: relative;
-        top: -1rem;
+        top: -.8rem;
 		left: .3rem;
     }
 

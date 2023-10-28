@@ -1,54 +1,40 @@
 <script>
-	import MainSection from '../../mainSection.svelte';
 
-	let doc;
-
-	let title;
-	let content;
-	let author;
-	let comment;
-	let history;
+	let resultArr = [];
+	let searchWord;
 
 	export let data;
 
 	$: {
-		doc = JSON.parse(data.doc);
-
-		console.log(doc);
-
-		title = doc.fullTitle;
-		if (doc.history === -1) {
-			// Not exist.
-			content = '존재하지 않는 문서입니다.';
-			history = 0;
-		} else {
-			author = doc.author;
-			content = doc.html;
-			comment = doc.comment;
-			history = doc.history;
-		}
+		searchWord = data.title;
+		resultArr = JSON.parse(data.result);
 	}
 
-	function write() {
-		location.href = `/w/${doc.fullTitle}`;
+	function readDoc(title) {
+		location.href = '/r/' + encodeURI(title);
 	}
 
-	function checkHistory() {
-		location.href = `/h/${doc.fullTitle}`;
-	}
+
 </script>
 
-<MainSection {title} {history}>
-	<span slot="btns">
-		<button on:click={write}>편집</button>
-		<button on:click={checkHistory}>역사</button>
-	</span>
-
-	<span slot="article">
-		<article id="mainArticle" class="kmu" contenteditable="false" bind:innerHTML={content} />
-	</span>
-</MainSection>
+<article>
+	<h1>"{searchWord}"에 대한 검색 결과:</h1>
+	{#each resultArr as result}
+		<button class="resultBtn" on:click={readDoc(result.title)}>
+			{result.title}
+		</button>
+	{/each}
+</article>
 
 <style lang="scss">
-	@import '../../../lib/style/kmu.scss';
+	.resultBtn {
+		width: -webkit-fill-available;
+		margin: 1rem;
+		border: .2rem black solid;
+		padding: 1rem;
+			font-weight: bold;
+			font-size: 1rem;
+			text-align: left;
+
+	}
 </style>
