@@ -44,7 +44,7 @@
 		on:input={suggest(searchWord)}
 		on:keydown={checkEnter}
 	/>
-	<button on:click={search(searchWord)}>Search!</button>
+	<button on:click={search(searchWord)}>Search</button>
 
 	{#each suggestionArr as suggestion, i}
 		<button on:click={readDoc(suggestion)} class="suggestionBtn" style="top: {(i+1)*3}rem"> {suggestion}</button>
@@ -56,6 +56,7 @@
 		position: relative;
         display: flex;
         z-index: 999;
+		margin-left: 2rem;
 	}
 
 	.suggestionBtn {

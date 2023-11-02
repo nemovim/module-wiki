@@ -27,7 +27,7 @@
 	}
 
 	function read() {
-		location.href = `/r/${doc.fullTitle}`;
+		location.href = `/r/${encodeURI(title)}`;
 	}
 
 	let previewContent = '';
@@ -44,21 +44,41 @@
 
 		previewContent = await RES.json();
 	}
+
+	async function write() {
+		const RES = await fetch('/api/write', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				fullTitle: title,
+				content,
+				author: 'annonymous',
+				comment,
+			})
+		});
+
+		let result = await RES.json();
+
+		if (result) {
+			location.href = `/r/${encodeURI(title)}`;
+		} else {
+			alert('Something happened!');
+		}
+	}
 </script>
 
 <MainSection {title} {history}>
 	<span slot="btns">
 		<button on:click={read}>취소</button>
-		<button><label for="saveSubmitBtn">저장</label></button>
+		<button on:click|once={write}>저장</button>
 	</span>
 
 	<span slot="article">
 		<article id="mainArticle">
-			<form method="POST">
-				<textarea id="docContent" name="content" contenteditable="true" bind:value={content} />
-				<input id="commentInput" name="comment" placeholder="comment" />
-				<button id="saveSubmitBtn" class="hidden" />
-			</form>
+				<textarea id="docContent" contenteditable="true" bind:value={content} />
+				<input id="commentInput" placeholder="comment" bind:value={comment} />
 			<button id="previewBtn" on:click={preview}>미리보기</button>
 			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewContent} />
 		</article>

@@ -1,5 +1,5 @@
 import wiki from '$lib/server/wiki.js';
-import { redirect, error } from '@sveltejs/kit';
+// import { redirect, error } from '@sveltejs/kit';
 
 export async function load({ params }) {
 	let doc = await wiki.readDoc(params.title);
@@ -9,18 +9,18 @@ export async function load({ params }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, params }) => {
+// export const actions = {
+// 	default: async ({ request, locals, params }) => {
 
-		if (!locals.session) {
-			throw error(401, 'Unauthorized');
-		}
+// 		if (!locals.session) {
+// 			throw error(401, 'Unauthorized');
+// 		}
 
-		const DATA = await request.formData();
+// 		const DATA = await request.formData();
 
-		const CONTENT = DATA.get('content').replaceAll(/\r\n/g, '\n');
-		await wiki.writeDoc(params.title, CONTENT, '', DATA.get('comment'));
+// 		const CONTENT = DATA.get('content').replaceAll(/\r\n/g, '\n');
+// 		await wiki.writeDoc(params.title, CONTENT, '', DATA.get('comment'));
 
-		throw redirect(303, encodeURI('/r/' + params.title));
-	}
-}
+// 		throw redirect(303, encodeURI('/r/' + params.title));
+// 	}
+// }
