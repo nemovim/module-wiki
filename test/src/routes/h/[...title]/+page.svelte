@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import MainSection from '../../mainSection.svelte';
 
-	let doc;
+	let diff;
 
 	let title;
 	let content;
@@ -12,37 +12,20 @@
 
 	export let data;
 
-	onMount(() => {
-		alert("개발 중입니다.");
-		location.href = '/r/위키:대문';
-	})
-
 	$: {
-		doc = JSON.parse(data.doc);
+		diff = JSON.parse(data.diff);
 
-		console.log(doc);
+		console.log(diff)
 
-		title = doc.fullTitle;
-		if (doc.history === -1) {
-			// Not exist.
-			// content = '존재하지 않는 문서입니다.';
-			content = '준비 중입니다.'
-			history = 0;
-		} else {
-			author = doc.author;
-			// content = doc.html;
-			content = '준비 중입니다.'
-			comment = doc.comment;
-			history = doc.history;
-		}
+		title = data.fullTitle;
 	}
 
 	function write() {
-		location.href = `/w/${doc.fullTitle}`;
+		location.href = `/w/${oldDoc.fullTitle}`;
 	}
 
 	function checkHistory() {
-		location.href = `/h/${doc.fullTitle}`;
+		location.href = `/h/${oldDoc.fullTitle}`;
 	}
 </script>
 
