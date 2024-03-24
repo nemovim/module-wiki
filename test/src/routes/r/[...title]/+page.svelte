@@ -7,7 +7,7 @@
 	let content;
 	let author;
 	let comment;
-	let history;
+	let revision;
 
 	export let data;
 
@@ -16,29 +16,30 @@
 
 		console.log(doc);
 
-		title = doc.fullTitle;
-		if (doc.history === -1) {
+		title = data.title;
+
+		if (doc === null) {
 			// Not exist.
 			content = '존재하지 않는 문서입니다.';
-			history = 0;
+			revision = 0;
 		} else {
 			author = doc.author;
 			content = doc.html;
 			comment = doc.comment;
-			history = doc.history;
+			revision = doc.revision;
 		}
 	}
 
 	function write() {
-		location.href = `/w/${encodeURI(doc.fullTitle)}`;
+		location.href = `/w/${encodeURI(data.title)}`;
 	}
 
 	function checkHistory() {
-		location.href = `/h/${encodeURI(doc.fullTitle)}`;
+		location.href = `/h/${encodeURI(data.title)}`;
 	}
 </script>
 
-<MainSection {title} {history}>
+<MainSection {title} {revision}>
 	<span slot="btns">
 		<button on:click={write}>편집</button>
 		<button on:click={checkHistory}>역사</button>

@@ -1,9 +1,9 @@
-import wiki from '$lib/server/wiki';
+import { WikiManager } from 'ken-wiki';
 
-export async function load({ params }) {
-	let doc = await wiki.readDoc(params.title);
-	doc.fullTitle = params.title;
+export async function load({ params, locals }) {
+	const doc = await WikiManager.readDocByFullTitle(params.title, locals.user);
 	return {
-		doc: JSON.stringify(doc),
-	}
+		title: params.title,
+		doc: JSON.stringify(doc)
+	};
 }

@@ -1,12 +1,12 @@
 <script>
     export let title;
-    export let history;
+    export let revision;
 </script>
 
 <article id="headerArticle">
 	<div id="titleDiv">
 		<h1 id="docTitle">{title}</h1>
-		<span id="docHistory">{history}번째 수정판</span>
+		<span id="docRevision">{revision}번째 수정판</span>
 	</div>
 
 	<div id="btnDiv">
@@ -29,7 +29,7 @@
 
     }
 
-    #docHistory {
+    #docRevision {
         position: relative;
         top: -.8rem;
 		left: .3rem;
