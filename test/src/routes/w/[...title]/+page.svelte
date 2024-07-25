@@ -3,34 +3,45 @@
 
 	let doc;
 
-	let title;
-	let content;
-	let author;
+	let fTitle;
+	let markup;
 	let comment;
-	let history;
+	let revision;
+	let type;
+	let categorizedArr;
 
 	export let data;
 
-	doc = JSON.parse(data.doc);
-	console.log(doc);
+	fTitle = data.title;
 
-	title = doc.fullTitle;
-	if (doc.history === -1) {
+	doc = JSON.parse(data.doc);
+
+	if (doc === null) {
 		// Not exist.
-		content = '';
-		history = 1;
+		markup = '';
+		revision = 1;
+		if (fTitle.split(':')[0] === '분류') {
+			type = 'category';
+		} else {
+			type = 'general';
+		}
+		categorizedArr = [];
 	} else {
-		author = doc.author;
-		content = doc.content;
-		comment = doc.comment;
-		history = doc.history + 1;
+		markup = doc.markup;
+		revision = doc.revision + 1;
+		type = doc.type;
+		if (type === 'category') {
+			categorizedArr = doc.categorizedArr;
+		} else {
+			categorizedArr = [];
+		}
 	}
 
 	function read() {
-		location.href = `/r/${encodeURI(title)}`;
+		location.href = `/r/${encodeURI(fTitle)}`;
 	}
 
-	let previewContent = '';
+	let previewHTML = '';
 	async function preview() {
 		const RES = await fetch('/api/preview', {
 			method: 'POST',
@@ -38,49 +49,32 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				content
+				markup,
+				type,
+				categorizedArr
 			})
 		});
 
-		previewContent = await RES.json();
-	}
-
-	async function write() {
-		const RES = await fetch('/api/write', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				fullTitle: title,
-				content,
-				author: 'annonymous',
-				comment,
-			})
-		});
-
-		let result = await RES.json();
-
-		if (result) {
-			location.href = `/r/${encodeURI(title)}`;
-		} else {
-			alert('Something happened!');
-		}
+		previewHTML = await RES.json();
 	}
 </script>
 
-<MainSection {title} {history}>
+<MainSection title={fTitle} {revision}>
 	<span slot="btns">
 		<button on:click={read}>취소</button>
-		<button on:click|once={write}>저장</button>
+		<form method="POST" style="display: inline-block">
+			<textarea name="markup" bind:value={markup} class="hidden" />
+			<input name="comment" bind:value={comment} class="hidden" />
+			<button>저장</button>
+		</form>
 	</span>
 
 	<span slot="article">
 		<article id="mainArticle">
-				<textarea id="docContent" contenteditable="true" bind:value={content} />
-				<input id="commentInput" placeholder="comment" bind:value={comment} />
+			<textarea id="docMarkup" contenteditable="true" bind:value={markup} />
+			<input id="commentInput" placeholder="comment" bind:value={comment} />
 			<button id="previewBtn" on:click={preview}>미리보기</button>
-			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewContent} />
+			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewHTML} />
 		</article>
 	</span>
 </MainSection>
@@ -88,7 +82,7 @@
 <style lang="scss">
 	@import '../../../lib/style/kmu.scss';
 
-	#docContent {
+	#docMarkup {
 		width: -webkit-fill-available;
 		height: 50vh;
 		font-size: 1rem;

@@ -105,13 +105,13 @@ td {
 	background-color: var(--gray-color3);
 }
 
-button {
+button, label.button {
 	padding: 0.4rem 0.6rem;
 	border: solid black 0.1rem;
 	background-color: white;
 }
 
-button:hover {
+button:hover, label.button:hover {
 	cursor: pointer;
 	background-color: var(--gray-color3);
 }

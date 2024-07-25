@@ -5,5 +5,5 @@ export async function GET({ locals }) {
 	if (!locals.session) {
 		throw error(401, 'Unauthorized');
 	}
-	return json(await WikiManager.getInfoArr());
+	return json(await WikiManager.getFullTitleArr());
 }

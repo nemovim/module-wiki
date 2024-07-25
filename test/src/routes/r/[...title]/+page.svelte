@@ -14,14 +14,15 @@
 	$: {
 		doc = JSON.parse(data.doc);
 
-		console.log(doc);
-
 		title = data.title;
 
 		if (doc === null) {
 			// Not exist.
 			content = '존재하지 않는 문서입니다.';
 			revision = 0;
+		} else if (doc.state === 'deleted') {
+			content = '존재하지 않는 문서입니다.';
+			revision = doc.revision;
 		} else {
 			author = doc.author;
 			content = doc.html;

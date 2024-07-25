@@ -1,8 +1,9 @@
-import wiki from '$lib/server/wiki';
 import { redirect } from '@sveltejs/kit';
+import { WikiManager } from 'ken-wiki';
 
 export async function load({ params }) {
-	let data = wiki.searchDoc(params.title);
+	console.log(params.title);
+	let data = await WikiManager.searchDoc(params.title);
 
 	if (data.status === 'exact') {
 		throw redirect(303, encodeURI(`/r/${data.result}`));

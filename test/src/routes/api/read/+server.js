@@ -1,10 +1,10 @@
-import wiki from '$lib/server/wiki.js';
 import { error, json } from '@sveltejs/kit';
+import { WikiManager } from 'ken-wiki';
 
 export async function POST({ request, locals }) {
 	if (!locals.session) {
-		throw error(401, 'Unauthorized');
+		throw error(402, 'Unauthorized');
 	}
 	let { fullTitle } = await request.json();
-	return json(await wiki.readDoc(fullTitle));
+	return json(await WikiManager.readDocByFullTitle(fullTitle));
 }

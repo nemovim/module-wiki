@@ -10,7 +10,7 @@
 	let suggestionArr = [];
 
 	async function getInfoArr() {
-		let data = await fetch('/api/info');
+		let data = await fetch('/api/common');
 		infoArr = await data.json();
 		hangulSearcher = new HangulSearcher(infoArr);
 		suggest(searchWord);
