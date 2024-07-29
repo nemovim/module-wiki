@@ -3,16 +3,17 @@
 
 	let doc;
 
-	let fTitle;
+	let fullTitle;
 	let markup;
 	let comment;
 	let revision;
 	let type;
 	let categorizedArr;
+	let previewHTML;
 
 	export let data;
 
-	fTitle = data.title;
+	fullTitle = data.fullTitle;
 
 	doc = JSON.parse(data.doc);
 
@@ -20,7 +21,7 @@
 		// Not exist.
 		markup = '';
 		revision = 1;
-		if (fTitle.split(':')[0] === '분류') {
+		if (fullTitle.split(':')[0] === '분류') {
 			type = 'category';
 		} else {
 			type = 'general';
@@ -37,11 +38,12 @@
 		}
 	}
 
+	previewHTML = '';
+
 	function read() {
-		location.href = `/r/${encodeURI(fTitle)}`;
+		location.href = `/r/${encodeURI(fullTitle)}`;
 	}
 
-	let previewHTML = '';
 	async function preview() {
 		const RES = await fetch('/api/preview', {
 			method: 'POST',
@@ -59,7 +61,7 @@
 	}
 </script>
 
-<MainSection title={fTitle} {revision}>
+<MainSection {fullTitle} description={`${revision}번째 편집`}>
 	<span slot="btns">
 		<button on:click={read}>취소</button>
 		<form method="POST" style="display: inline-block">

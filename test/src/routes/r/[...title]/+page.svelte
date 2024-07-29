@@ -3,7 +3,8 @@
 
 	let doc;
 
-	let title;
+	let fullTitle;
+	let description;
 	let content;
 	let author;
 	let comment;
@@ -14,7 +15,7 @@
 	$: {
 		doc = JSON.parse(data.doc);
 
-		title = data.title;
+		fullTitle = data.fullTitle;
 
 		if (doc === null) {
 			// Not exist.
@@ -29,18 +30,20 @@
 			comment = doc.comment;
 			revision = doc.revision;
 		}
+
+		description = revision+'번째 수정판';
 	}
 
 	function write() {
-		location.href = `/w/${encodeURI(data.title)}`;
+		location.href = `/w/${encodeURI(fullTitle)}`;
 	}
 
 	function checkHistory() {
-		location.href = `/h/${encodeURI(data.title)}`;
+		location.href = `/h/${encodeURI(fullTitle)}`;
 	}
 </script>
 
-<MainSection {title} {revision}>
+<MainSection {fullTitle} {description}>
 	<span slot="btns">
 		<button on:click={write}>편집</button>
 		<button on:click={checkHistory}>역사</button>

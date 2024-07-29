@@ -14,7 +14,7 @@ export async function load({ params, locals }) {
 			throw new Error('Cannot Write');
 		}
 		return {
-			title: params.title,
+			fullTitle: params.title,
 			doc: JSON.stringify(doc)
 		};
 	} catch (e) {

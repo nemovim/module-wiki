@@ -9,7 +9,7 @@ export async function load({ params }) {
 		throw redirect(303, encodeURI(`/r/${data.result}`));
 	} else {
 		return {
-			title: params.title,
+			fullTitle: params.title,
 			result: JSON.stringify(data.result)
 		};
 	}

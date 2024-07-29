@@ -1,42 +1,82 @@
 <script>
 	import { onMount } from 'svelte';
 	import MainSection from '../../mainSection.svelte';
+	import HistList from './histList.svelte';
 
 	let diff;
+	let oldDoc;
+	let newDoc;
 
-	let title;
-	let content;
-	let author;
-	let comment;
-	let history;
+	let doc;
+
+	let histArr;
+
+	let fullTitle;
+	let description;
 
 	export let data;
 
+	fullTitle = data.fullTitle;
+
 	$: {
-		diff = JSON.parse(data.diff);
+		if (data.type === 'list') {
+			if (histArr === undefined) {
+				histArr = JSON.parse(data.histArr);
+				if (histArr !== null) {
+					histArr.reverse();
+				}
+				description = '(역사 목록)';
+			} else {
+				console.log(histArr);
+			}
+		} else if (data.type === 'compare') {
+			diff = JSON.parse(data.diff);
+			oldDoc = JSON.parse(data.oldDoc);
+			newDoc = JSON.parse(data.newDoc);
+			console.log(diff);
+			console.log(oldDoc);
+			console.log(newDoc);
+			description = `(역사 비교 ${oldDoc.revision}&${newDoc.revision}번째 수정판)`;
+		} else if (data.type === 'read') {
+			doc = JSON.parse(data.doc);
+			description = `(역사 열람 ${doc.revision}번째 수정판)`;
+		}
+	}
 
-		console.log(diff)
-
-		title = data.fullTitle;
+	function read() {
+		location.href = encodeURI(`/r/${fullTitle}`);
 	}
 
 	function write() {
-		location.href = `/w/${oldDoc.fullTitle}`;
+		location.href = encodeURI(`/w/${fullTitle}`);
 	}
 
 	function checkHistory() {
-		location.href = `/h/${oldDoc.fullTitle}`;
+		location.href = encodeURI(`/h/${fullTitle}`);
 	}
 </script>
 
-<MainSection {title} {history}>
+<MainSection {fullTitle} {description}>
 	<span slot="btns">
+		<button on:click={read}>열람</button>
 		<button on:click={write}>편집</button>
-		<button on:click={checkHistory}>역사</button>
+		{#if data.type !== 'list'}
+			<button on:click={checkHistory}>역사</button>
+		{/if}
 	</span>
 
 	<span slot="article">
-		<article id="mainArticle" class="kmu" contenteditable="false" bind:innerHTML={content} />
+		{#if data.type === 'read'}
+			<article id="mainArticle" class="kmu" contenteditable="false" bind:innerHTML={doc.html} />
+		{:else}
+			<article id="mainArticle">
+				{#if data.type === 'list'}
+					<HistList {fullTitle} bind:histArr />
+				{:else if data.type === 'compare'}
+					<p>compare</p>
+				{/if}
+			</article>
+		{/if}
 	</span>
 </MainSection>
 

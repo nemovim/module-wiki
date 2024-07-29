@@ -5,7 +5,7 @@
 	export let data;
 
 	$: {
-		searchWord = data.title;
+		searchWord = data.fullTitle;
 		resultArr = JSON.parse(data.result);
 	}
 

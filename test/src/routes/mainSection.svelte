@@ -1,12 +1,12 @@
 <script>
-    export let title;
-    export let revision;
+    export let fullTitle;
+    export let description;
 </script>
 
 <article id="headerArticle">
 	<div id="titleDiv">
-		<h1 id="docTitle">{title}</h1>
-		<span id="docRevision">{revision}번째 수정판</span>
+		<h1 id="docTitle">{fullTitle}</h1>
+		<span id="docDescription">{description}</span>
 	</div>
 
 	<div id="btnDiv">
@@ -29,7 +29,7 @@
 
     }
 
-    #docRevision {
+    #docDescription {
         position: relative;
         top: -.8rem;
 		left: .3rem;
