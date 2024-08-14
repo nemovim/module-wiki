@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import MainSection from '../../mainSection.svelte';
 	import HistList from './histList.svelte';
+	import HistCompare from './histCompare.svelte';
 
 	let diff;
 	let oldDoc;
@@ -73,7 +74,7 @@
 				{#if data.type === 'list'}
 					<HistList {fullTitle} bind:histArr />
 				{:else if data.type === 'compare'}
-					<p>compare</p>
+					<HistCompare bind:diff />
 				{/if}
 			</article>
 		{/if}

@@ -5,7 +5,7 @@
 
 <article id="headerArticle">
 	<div id="titleDiv">
-		<h1 id="docTitle">{fullTitle}</h1>
+		<h1 id="docTitle"><a href="/r/{fullTitle}">{fullTitle}</a></h1>
 		<span id="docDescription">{description}</span>
 	</div>
 
@@ -27,6 +27,15 @@
 	#docTitle {
 		font-size: 2.5rem;
 
+		a {
+			color: black !important;
+		}
+
+		a:hover {
+			text-decoration: underline;
+			text-underline-offset: 0.4rem;
+			text-decoration-thickness: 0.12rem;
+		}
     }
 
     #docDescription {

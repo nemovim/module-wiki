@@ -40,11 +40,11 @@
 
 	previewHTML = '';
 
-	function read() {
+	function readDoc() {
 		location.href = `/r/${encodeURI(fullTitle)}`;
 	}
 
-	async function preview() {
+	async function previewDoc() {
 		const RES = await fetch('/api/preview', {
 			method: 'POST',
 			headers: {
@@ -59,11 +59,36 @@
 
 		previewHTML = await RES.json();
 	}
+
+	function showMarkup() {
+		alert("개발중");
+		return true;
+	}
+
+	function deleteDoc() {
+		if (confirm("정말로 삭제하시겠습니까?")) {
+			return true;
+		} else {
+			alert("삭제가 취소되었습니다.");
+		}
+	}
+
+	function moveDoc() {
+		const answer = prompt("새로운 문서 제목을 입력해 주세요.");
+		if (answer) {
+			return answer;
+		} else {
+			alert("이동이 취소되었습니다.");
+		}
+	}
 </script>
 
 <MainSection {fullTitle} description={`${revision}번째 편집`}>
 	<span slot="btns">
-		<button on:click={read}>취소</button>
+		<button on:click={readDoc}>취소</button>
+		<button on:click={showMarkup}>문법</button>
+		<button on:click={deleteDoc}>삭제</button>
+		<button on:click={moveDoc}>이동</button>
 		<form method="POST" style="display: inline-block">
 			<textarea name="markup" bind:value={markup} class="hidden" />
 			<input name="comment" bind:value={comment} class="hidden" />
@@ -75,7 +100,7 @@
 		<article id="mainArticle">
 			<textarea id="docMarkup" contenteditable="true" bind:value={markup} />
 			<input id="commentInput" placeholder="comment" bind:value={comment} />
-			<button id="previewBtn" on:click={preview}>미리보기</button>
+			<button id="previewBtn" on:click={previewDoc}>미리보기</button>
 			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewHTML} />
 		</article>
 	</span>

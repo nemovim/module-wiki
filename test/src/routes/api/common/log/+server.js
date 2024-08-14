@@ -5,6 +5,6 @@ export async function POST({ request, locals }) {
 	if (!locals.session) {
 		throw error(401, 'Unauthorized');
 	}
-	let { fullTitle, fromRev, toRev } = await request.json();
-	return json(await WikiManager.readHistoriesByFullTitle(fullTitle, locals.user, fromRev, toRev));
+	let { count } = await request.json();
+	return json(await WikiManager.getRecentWriteLogs(count));
 }

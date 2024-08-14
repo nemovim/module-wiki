@@ -25,7 +25,7 @@ export async function handle({ event, resolve }) {
 	// console.log(user);
 
 	if (user === null) {
-		user = await WikiManager.createNewUserByEmailAndName(result.session.email, result.session.name);
+		user = await WikiManager.createNewUserByEmailAndName(result.session.email, result.session.email.split('@')[0]);
 		// console.log('=== new user ===')
 		// console.log(user)
 	}

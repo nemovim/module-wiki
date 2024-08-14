@@ -1,5 +1,7 @@
 <script>
-	import SearchModule from './searchModule.svelte';
+	import RecentModule from './recentModule.svelte';
+import SearchModule from './searchModule.svelte';
+	import UserModule from './userModule.svelte';
 </script>
 
 <header>
@@ -18,10 +20,12 @@
 
 <aside id="mainAside">
     <aside>
-        <p>User Info</p>
+		<UserModule/>
     </aside>
     <aside>
-        <p>Recently Edited</p>
+        <h3>수정된 문서</h3>
+		<hr>
+		<RecentModule/>
     </aside>
 </aside>
 
@@ -47,13 +51,26 @@
 
 	#mainSection {
         @include main;
-        max-width: 40rem;
+        max-width: 43rem;
         width: -webkit-fill-available;
 	}
 
     #mainAside > aside {
         @include main;
         margin-left: 0;
+		min-width: 12vw;
+		padding: 1rem;
+
+		h3 {
+			text-align: center;
+			font-weight: normal;
+			margin-top: .5rem;
+			margin-bottom: 1rem;
+		}
+
+		:global(hr) {
+			margin: .2rem 0 ;
+		}
     }
 
 	@mixin xer {
