@@ -1,7 +1,20 @@
 <script>
 	import RecentModule from './recentModule.svelte';
-import SearchModule from './searchModule.svelte';
+	import SearchModule from './searchModule.svelte';
 	import UserModule from './userModule.svelte';
+	import { afterNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { addPopupListener } from '$lib/footnotePopup';
+
+	onMount(() => {
+		addPopupListener();
+	});
+
+	afterNavigate(() => {
+		addPopupListener();
+	});
+
+
 </script>
 
 <header>
@@ -9,26 +22,24 @@ import SearchModule from './searchModule.svelte';
 		<span style="color: rgb(0, 50, 104);">K</span><span style="color: rgb(0, 132, 202);">E</span
 		><span style="color: rgb(21, 192, 242);">N</span><span>-WIKI</span>
 	</a>
-	<SearchModule/>
+	<SearchModule />
 </header>
 
 <div id="mainDiv">
+	<section id="mainSection">
+		<slot />
+	</section>
 
-<section id="mainSection">
-	<slot />
-</section>
-
-<aside id="mainAside">
-    <aside>
-		<UserModule/>
-    </aside>
-    <aside>
-        <h3>수정된 문서</h3>
-		<hr>
-		<RecentModule/>
-    </aside>
-</aside>
-
+	<aside id="mainAside">
+		<aside>
+			<UserModule />
+		</aside>
+		<aside>
+			<h3>수정된 문서</h3>
+			<hr />
+			<RecentModule />
+		</aside>
+	</aside>
 </div>
 
 <footer>
@@ -36,42 +47,42 @@ import SearchModule from './searchModule.svelte';
 </footer>
 
 <style lang="scss">
-    #mainDiv {
-        display: flex;
-        justify-content: center;
-    }
+	#mainDiv {
+		display: flex;
+		justify-content: center;
+	}
 
-    @mixin main {
+	@mixin main {
 		margin: 1rem;
 		height: -webkit-fill-available;
 		padding: 1.5rem 2rem;
 		border: solid grey 0.1rem;
 		background-color: white;
-    }
-
-	#mainSection {
-        @include main;
-        max-width: 43rem;
-        width: -webkit-fill-available;
 	}
 
-    #mainAside > aside {
-        @include main;
-        margin-left: 0;
+	#mainSection {
+		@include main;
+		max-width: 43rem;
+		width: -webkit-fill-available;
+	}
+
+	#mainAside > aside {
+		@include main;
+		margin-left: 0;
 		min-width: 12vw;
 		padding: 1rem;
 
 		h3 {
 			text-align: center;
 			font-weight: normal;
-			margin-top: .5rem;
+			margin-top: 0.5rem;
 			margin-bottom: 1rem;
 		}
 
 		:global(hr) {
-			margin: .2rem 0 ;
+			margin: 0.2rem 0;
 		}
-    }
+	}
 
 	@mixin xer {
 		position: relative;
@@ -91,7 +102,7 @@ import SearchModule from './searchModule.svelte';
 			font-size: 1.6rem;
 			margin-top: 0.4rem;
 			margin-left: 0.6rem;
-            // color: black;
+			// color: black;
 		}
 
 		a:hover {
@@ -109,5 +120,21 @@ import SearchModule from './searchModule.svelte';
 			font-size: 0.6rem;
 			margin: 0.2rem;
 		}
+	}
+
+	:global([id^='popup-']) {
+		position: absolute;
+		background-color: white;
+		border: solid black 0.1rem;
+		padding: 0.3rem 0.4rem 0.1rem 0.4rem;
+		z-index: 999;
+		line-height: 1.2;
+		word-break: keep-all;
+		white-space: nowrap;
+		top: -2.2rem;
+		left: 0;
+		display: flex;
+		width: fit-content;
+		color: black;
 	}
 </style>

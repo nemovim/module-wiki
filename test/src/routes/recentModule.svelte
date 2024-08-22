@@ -3,7 +3,7 @@
 
 	let recentHistArr = [];
 
-	async function getInfoArr(count = 10) {
+	async function getInfoArr(count = 20) {
 		const res = await fetch('/api/common/log', {
 			method: 'POST',
 			headers: {
@@ -13,6 +13,15 @@
 		});
 		recentHistArr = await res.json();
 		recentHistArr.reverse();
+		let titleSet = new Set();
+		recentHistArr = recentHistArr.filter(hist => {
+			if (titleSet.has(hist.fullTitle)) {
+				return false;
+			} else {
+				titleSet.add(hist.fullTitle);
+				return true;
+			}
+		})
 	}
 
 	function parseTime(time) {
@@ -27,14 +36,16 @@
 
 {#if recentHistArr.length === 0}
 	<div>불러오는 중...</div>
-	<hr>
+	<hr />
 {:else}
-{#each recentHistArr as hist, i}
-	<div>
-		<a href="/r/{hist.fullTitle}">{hist.fullTitle}</a> <span>{parseTime(hist.createdAt)}</span>
-	</div>
-	<hr>
-{/each}
+	{#each recentHistArr as hist, i}
+		{#if i <= 10}
+			<div>
+				<a href="/r/{hist.fullTitle}">{hist.fullTitle}</a> <span>{parseTime(hist.createdAt)}</span>
+			</div>
+			<hr />
+		{/if}
+	{/each}
 {/if}
 
 <style lang="scss">
@@ -42,6 +53,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0 .1rem;
+		padding: 0 0.1rem;
 	}
 </style>

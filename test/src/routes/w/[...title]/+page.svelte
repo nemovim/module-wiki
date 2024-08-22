@@ -1,5 +1,6 @@
 <script>
 	import MainSection from '../../mainSection.svelte';
+	import { addPopupListener, removePopupListener } from '$lib/footnotePopup';
 
 	let doc;
 
@@ -38,13 +39,13 @@
 		}
 	}
 
-	previewHTML = '';
-
 	function readDoc() {
 		location.href = `/r/${encodeURI(fullTitle)}`;
 	}
 
 	async function previewDoc() {
+		removePopupListener();
+
 		const RES = await fetch('/api/preview', {
 			method: 'POST',
 			headers: {
@@ -57,7 +58,9 @@
 			})
 		});
 
-		previewHTML = await RES.json();
+		const previewDiv = document.getElementById('previewDiv');
+		previewDiv.innerHTML = await RES.json();
+		addPopupListener();
 	}
 
 	function showMarkup() {
@@ -101,7 +104,7 @@
 			<textarea id="docMarkup" contenteditable="true" bind:value={markup} />
 			<input id="commentInput" placeholder="comment" bind:value={comment} />
 			<button id="previewBtn" on:click={previewDoc}>미리보기</button>
-			<div id="previewDiv" class="kmu" contenteditable="false" bind:innerHTML={previewHTML} />
+			<div id="previewDiv" class="kmu" contenteditable="false"/>
 		</article>
 	</span>
 </MainSection>

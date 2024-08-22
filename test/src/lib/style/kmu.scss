@@ -1,6 +1,6 @@
 @mixin heading {
 	margin-top: 1em;
-	margin-bottom: .5em;
+	margin-bottom: 0.5em;
 	font-weight: 600;
 	border-bottom: 0.05em var(--gray-color2) solid;
 }
@@ -8,7 +8,6 @@
 // @import './global.scss';
 
 .kmu :global {
-
 	word-break: break-all;
 
 	strong {
@@ -137,9 +136,9 @@
 	#index-content {
 		display: none;
 	}
-	
+
 	#content-footnote {
-		margin: .5rem 0;
+		margin: 0.5rem 0;
 	}
 
 	#index {
@@ -151,5 +150,25 @@
 		p {
 			margin-bottom: 0;
 		}
+	}
+
+	#footnote > p {
+		margin: 0;
+	}
+
+	[id^='popup-'] {
+		position: absolute;
+		background-color: white;
+		border: solid black 0.1rem;
+		padding: 0.3rem 0.4rem 0.1rem 0.4rem;
+		z-index: 999;
+		line-height: 1.2;
+		word-break: keep-all;
+		white-space: nowrap;
+		top: -2.2rem;
+		left: 0;
+		display: flex;
+		width: fit-content;
+		color: black;
 	}
 }
