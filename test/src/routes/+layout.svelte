@@ -121,20 +121,4 @@
 			margin: 0.2rem;
 		}
 	}
-
-	:global([id^='popup-']) {
-		position: absolute;
-		background-color: white;
-		border: solid black 0.1rem;
-		padding: 0.3rem 0.4rem 0.1rem 0.4rem;
-		z-index: 999;
-		line-height: 1.2;
-		word-break: keep-all;
-		white-space: nowrap;
-		top: -2.2rem;
-		left: 0;
-		display: flex;
-		width: fit-content;
-		color: black;
-	}
 </style>
