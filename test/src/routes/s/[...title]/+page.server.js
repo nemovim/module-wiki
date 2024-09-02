@@ -1,15 +1,23 @@
-import { redirect } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 import { WikiManager } from 'ken-wiki';
 
 export async function load({ params }) {
-	console.log(params.title);
-	let data = await WikiManager.searchDoc(params.title);
+
+	const title = params.title;
+	let data;
+
+	try {
+		data = await WikiManager.searchDoc(title);
+	} catch (e) {
+		throw error(401, JSON.stringify({ fullTitle: title, revision: '?', reason: e.message }));
+	}
 
 	if (data.status === 'exact') {
+		console.log(data.result);
 		throw redirect(303, encodeURI(`/r/${data.result}`));
 	} else {
 		return {
-			fullTitle: params.title,
+			fullTitle: title,
 			result: JSON.stringify(data.result)
 		};
 	}

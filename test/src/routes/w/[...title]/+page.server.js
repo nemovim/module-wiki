@@ -1,9 +1,10 @@
 import { redirect, error } from '@sveltejs/kit';
 import { WikiManager, AuthorityManager } from 'ken-wiki';
+import xss from 'xss';
 
 export async function load({ params, locals }) {
 	try {
-		let doc = await WikiManager.readDocByFullTitle(params.title, locals.user);
+		const doc = await WikiManager.readDocByFullTitle(params.title, locals.user);
 		if (doc !== null && !AuthorityManager.canWrite(doc, locals.user.authority)) {
 			throw new Error('Cannot Write');
 		} else if (
@@ -31,13 +32,13 @@ export async function load({ params, locals }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const data = await request.formData();
-
-		const markup = data.get('markup').replaceAll(/\r\n/g, '\n');
-
 		try {
+			const data = await request.formData();
+			const markup = xss(data.get('markup').replaceAll(/\r\n/g, '\n'));
+
 			await WikiManager.writeDocByFullTitle(params.title, locals.user, markup, data.get('comment'));
 		} catch (e) {
+			console.log(e);
 			throw error(
 				401,
 				JSON.stringify({
@@ -47,6 +48,7 @@ export const actions = {
 				})
 			);
 		}
+
 		throw redirect(303, encodeURI('/r/' + params.title));
 	}
 };

@@ -78,5 +78,7 @@
 		height: 3rem;
 		padding: 0.5rem 1rem;
 		font-size: 1.2rem;
+		word-break: keep-all;
+		white-space: nowrap;
 	}
 </style>
