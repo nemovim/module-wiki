@@ -9,12 +9,12 @@ export async function load({ params }) {
 	try {
 		data = await WikiManager.searchDoc(title);
 	} catch (e) {
-		throw error(401, JSON.stringify({ fullTitle: title, revision: '?', reason: e.message }));
+		error(401, JSON.stringify({ fullTitle: title, revision: '?', reason: e.message }));
 	}
 
 	if (data.status === 'exact') {
 		console.log(data.result);
-		throw redirect(303, encodeURI(`/r/${data.result}`));
+		redirect(303, encodeURI(`/r/${data.result}`));
 	} else {
 		return {
 			fullTitle: title,

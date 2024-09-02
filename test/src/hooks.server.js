@@ -17,7 +17,7 @@ export async function handle({ event, resolve }) {
 	const result = await authClient.authenticate(event);
 
 	if (result?.status % 100 === 3) {
-		throw redirect(result.status, result.location);
+		redirect(result.status, result.location);
 	}
 
 	let user = await WikiManager.getUserByEmail(result.session.email);

@@ -3,7 +3,7 @@ import { AuthorityManager } from 'ken-wiki';
 
 export async function POST({ request, locals }) {
 	if (!locals.session) {
-		throw error(401, 'Unauthorized');
+		error(401, 'Unauthorized');
 	}
     let { doc, actionType } = await request.json();
 	if (actionType === 'delete') {

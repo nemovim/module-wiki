@@ -9,6 +9,6 @@ export async function load({ params, locals}) {
 			doc: JSON.stringify(doc),
 		};
 	} catch (e) {
-		throw error(401, JSON.stringify({ fullTitle: params.title, revision: '?', reason: e.message}));
+		error(401, JSON.stringify({ fullTitle: params.title, revision: '?', reason: e.message}));
 	}
 }

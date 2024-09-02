@@ -19,14 +19,14 @@ export async function load({ params, locals }) {
 			doc: JSON.stringify(doc)
 		};
 	} catch (e) {
-		throw error(
-			401,
-			JSON.stringify({
-				fullTitle: params.title,
-				revision: '?',
-				reason: e.message
-			})
-		);
+		error(
+        			401,
+        			JSON.stringify({
+        				fullTitle: params.title,
+        				revision: '?',
+        				reason: e.message
+        			})
+        		);
 	}
 }
 
@@ -39,16 +39,16 @@ export const actions = {
 			await WikiManager.writeDocByFullTitle(params.title, locals.user, markup, data.get('comment'));
 		} catch (e) {
 			console.log(e);
-			throw error(
-				401,
-				JSON.stringify({
-					fullTitle: params.title,
-					revision: '?',
-					reason: e.message
-				})
-			);
+			error(
+            				401,
+            				JSON.stringify({
+            					fullTitle: params.title,
+            					revision: '?',
+            					reason: e.message
+            				})
+            			);
 		}
 
-		throw redirect(303, encodeURI('/r/' + params.title));
+		redirect(303, encodeURI('/r/' + params.title));
 	}
 };

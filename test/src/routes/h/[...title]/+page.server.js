@@ -36,6 +36,6 @@ export async function load({ params, url, locals }) {
 			};
 		}
 	} catch (e) {
-		throw error(401, JSON.stringify({ fullTitle: params.title, revision: '?', reason: e.message }));
+		error(401, JSON.stringify({ fullTitle: params.title, revision: '?', reason: e.message }));
 	}
 }
