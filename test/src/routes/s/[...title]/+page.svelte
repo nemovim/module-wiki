@@ -1,4 +1,8 @@
 <script>
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
+
 	let resultArr = [];
 	let searchWord;
 
@@ -10,11 +14,11 @@
 	}
 
 	function readDoc(title) {
-		location.href = '/r/' + encodeURI(title);
+		location.href = `/r/${encodeFullTitle(title)}`;
 	}
 
 	function writeDoc(title) {
-		location.href = '/w/' + encodeURI(title);
+		location.href = `/w/${encodeFullTitle(title)}`;
 	}
 </script>
 
@@ -24,8 +28,8 @@
 		"{searchWord}" 문서를 생성하시겠습니까?
 	</button>
 	{#each resultArr as result}
-		<button class="resultBtn" on:click={readDoc(result.title)}>
-			{result.title}
+		<button class="resultBtn" on:click={readDoc(result.original)}>
+			{result.original}
 		</button>
 	{/each}
 </article>

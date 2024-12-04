@@ -1,5 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
 
 	let recentHistArr = [];
 
@@ -12,7 +15,7 @@
 			body: JSON.stringify({ count })
 		});
 		recentHistArr = await res.json();
-		recentHistArr.reverse();
+		// recentHistArr.reverse();
 		let titleSet = new Set();
 		recentHistArr = recentHistArr.filter(hist => {
 			if (titleSet.has(hist.fullTitle)) {
@@ -41,7 +44,7 @@
 	{#each recentHistArr as hist, i}
 		{#if i <= 10}
 			<div>
-				<a href="/r/{hist.fullTitle}">{hist.fullTitle}</a> <span>{parseTime(hist.createdAt)}</span>
+				<a href="/r/{encodeFullTitle(hist.fullTitle)}">{hist.fullTitle}</a> <span>{parseTime(hist.createdAt)}</span>
 			</div>
 			<hr />
 		{/if}
@@ -54,5 +57,9 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 0 0.1rem;
+
+		a {
+			word-break: break-all;
+		}
 	}
 </style>

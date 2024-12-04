@@ -8,5 +8,9 @@ export async function POST({ request, locals }) {
 	}
 	let data = await request.json();
 	const markup = xss(data.markup.replaceAll(/\r\n/g, '\n'));
-	return json(await WikiManager.createHTML(markup, data.type, data.categorizedArr));
+	try {
+		return json(await WikiManager.createHTML(markup, data.type, data.categorizedArr));
+	} catch (e) {
+		return json(e.toString());
+	}
 }

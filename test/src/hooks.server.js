@@ -1,8 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 import AuthClient from 'ken-auth/client';
 import { WikiDB, WikiManager } from 'ken-wiki';
+import { WIKI_MONGO_URI } from '$env/static/private';
 
-(new WikiDB()).init().then(async () => {
+(new WikiDB()).init(WIKI_MONGO_URI).then(async () => {
 	console.log('[Wiki DB Is Ready]');
 	if (!(await WikiManager.checkInit())) {
 		console.log('[Wiki Is Initiating]');

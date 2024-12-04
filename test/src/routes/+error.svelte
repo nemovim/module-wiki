@@ -1,10 +1,11 @@
 <script>
 	import { page } from '$app/stores';
 	import MainSection from './mainSection.svelte';
-    const msg = JSON.parse($page.error.message);
+	const error = JSON.parse($page.error.message);
+	console.error(error.errorStack);
 </script>
 
-<MainSection fullTitle={msg.fullTitle} description={"(오류 또는 권한 부족)"}>
+<MainSection fullTitle={error.fullTitle} description={"(오류 또는 권한 부족)"}>
 	<span slot="btns">
 		<button
 			on:click={() => {
@@ -13,7 +14,7 @@
 		>
 	</span>
 	<span slot="article">
-		<p>{msg.reason}</p>
+		<p>{error.errorTitle}</p>
 		<!-- <p>권한이 부족합니다.</p> -->
 	</span>
 </MainSection>

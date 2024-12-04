@@ -1,11 +1,12 @@
 <script>
+	import { Utils } from 'ken-wiki';
     export let fullTitle;
     export let description;
 </script>
 
 <article id="headerArticle">
 	<div id="titleDiv">
-		<h1 id="docTitle"><a href="/r/{fullTitle}">{fullTitle}</a></h1>
+		<h1 id="docTitle"><a href="/r/{Utils.encodeFullTitle(fullTitle)}">{fullTitle}</a></h1>
 		<span id="docDescription">{description}</span>
 	</div>
 

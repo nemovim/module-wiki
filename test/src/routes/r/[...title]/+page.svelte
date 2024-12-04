@@ -1,5 +1,8 @@
 <script>
 	import MainSection from '../../mainSection.svelte';
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
 
 	let doc;
 
@@ -35,11 +38,11 @@
 	}
 
 	function write() {
-		location.href = `/w/${encodeURI(fullTitle)}`;
+		location.href = `/w/${encodeFullTitle(fullTitle)}`;
 	}
 
 	function checkHistory() {
-		location.href = `/h/${encodeURI(fullTitle)}`;
+		location.href = `/h/${encodeFullTitle(fullTitle)}`;
 	}
 </script>
 

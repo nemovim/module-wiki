@@ -3,6 +3,10 @@
 	import MainSection from '../../mainSection.svelte';
 	import HistList from './histList.svelte';
 	import HistCompare from './histCompare.svelte';
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
+
 
 	let diff;
 	let oldDoc;
@@ -45,15 +49,15 @@
 	}
 
 	function read() {
-		location.href = encodeURI(`/r/${fullTitle}`);
+		location.href = `/r/${encodeFullTitle(fullTitle)}`;
 	}
 
 	function write() {
-		location.href = encodeURI(`/w/${fullTitle}`);
+		location.href = `/w/${encodeFullTitle(fullTitle)}`;
 	}
 
 	function checkHistory() {
-		location.href = encodeURI(`/h/${fullTitle}`);
+		location.href = `/h/${encodeFullTitle(fullTitle)}`;
 	}
 </script>
 

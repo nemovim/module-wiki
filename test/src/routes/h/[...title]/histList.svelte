@@ -1,4 +1,8 @@
 <script>
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
+
 	export let histArr;
 	export let fullTitle;
 
@@ -53,9 +57,9 @@
 		{#if i < histArr.length - 1 || hist.revision === 1}
 			<div class="histDiv">
 				<span>
-					<a href="/h/{encodeURI(fullTitle)}?rev={hist.revision}">{hist.revision}번째 수정판</a>
+					<a href="/h/{encodeFullTitle(fullTitle)}?rev={hist.revision}">{hist.revision}번째 수정판</a>
 					{#if hist.revision > 1}
-						(<a href="/h/{encodeURI(fullTitle)}?old={hist.revision - 1}&new={hist.revision}">비교</a
+						(<a href="/h/{encodeFullTitle(fullTitle)}?old={hist.revision - 1}&new={hist.revision}">비교</a
 						>|{@html createByteChangedSpan(histArr[i + 1].markup, hist.markup)})
 					{:else}
 						({@html createByteChangedSpan('', hist.markup)})

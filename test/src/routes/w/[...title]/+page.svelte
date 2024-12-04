@@ -2,6 +2,10 @@
 	import MainSection from '../../mainSection.svelte';
 	import { addPopupListener, removePopupListener } from '$lib/footnotePopup';
 	import { page } from '$app/stores';
+	import { Utils } from 'ken-wiki';
+	import { onMount } from 'svelte';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
 
 	let markup;
 	let comment;
@@ -39,7 +43,7 @@
 	}
 
 	function readDoc() {
-		location.href = `/r/${encodeURI(fullTitle)}`;
+		location.href = `/r/${encodeFullTitle(fullTitle)}`;
 	}
 
 	async function previewDoc() {
@@ -106,7 +110,7 @@
 						alert(result.msg);
 					} else {
 						alert('삭제가 완료되었습니다.');
-						location.href = `/r/${encodeURI(fullTitle)}`;
+						location.href = `/r/${encodeFullTitle(fullTitle)}`;
 					}
 				} else {
 					alert('삭제가 취소되었습니다.');
@@ -153,7 +157,7 @@
 						alert(result.msg);
 					} else {
 						alert('이동이 완료되었습니다.');
-						location.href = `/r/${encodeURI(newTitle)}`;
+						location.href = `/r/${encodeFullTitle(newTitle)}`;
 					}
 				} else {
 					alert('이동이 취소되었습니다.');
@@ -209,7 +213,7 @@
 						alert(result.msg);
 					} else {
 						alert('수정이 완료되었습니다.');
-						location.href = `/r/${encodeURI(fullTitle)}`;
+						location.href = `/r/${encodeFullTitle(fullTitle)}`;
 					}
 				} else {
 					alert('수정이 취소되었습니다.');
@@ -219,6 +223,11 @@
 			}
 		}
 	}
+
+	onMount(() => {
+		document.getElementById('docMarkup').focus();
+	});
+
 </script>
 
 <MainSection {fullTitle} description={`${revision}번째 편집`}>

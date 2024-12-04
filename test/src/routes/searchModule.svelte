@@ -1,5 +1,8 @@
 <script>
 	import HangulSearcher from 'hangul-search';
+	import { Utils } from 'ken-wiki';
+
+	const encodeFullTitle = Utils.encodeFullTitle;
 
 	let searchWord = '';
 
@@ -12,12 +15,13 @@
 	async function getInfoArr() {
 		let data = await fetch('/api/common/search');
 		infoArr = await data.json();
+		console.log(infoArr);
 		hangulSearcher = new HangulSearcher(infoArr);
 		suggest(searchWord);
 	}
 
 	function suggest(title) {
-		suggestionArr = hangulSearcher.autoComplete(title).splice(0, 5);
+		suggestionArr = hangulSearcher.autoComplete(title);
 	}
 
 	function checkEnter(e) {
@@ -27,11 +31,11 @@
 	}
 
 	function search(title) {
-		location.href = '/s/' + encodeURI(title);
+		location.href = `/s/${encodeFullTitle(title)}`;
 	}
 
 	function readDoc(title) {
-		location.href = '/r/' + encodeURI(title);
+		location.href = `/r/${encodeFullTitle(title)}`;
 	}
 
 	function onBlurSearchDiv(e) {
@@ -59,9 +63,11 @@
 	<button on:click={search(searchWord)}>Search</button>
 
 	{#each suggestionArr as suggestion, i}
-		<button on:click={readDoc(suggestion)} class="suggestionBtn" style="top: {(i + 1) * 3}rem">
-			{suggestion}</button
-		>
+		{#if i <= 8}
+			<button on:click={readDoc(suggestion)} class="suggestionBtn" style="top: {(i + 1) * 3}rem">
+				{suggestion}</button
+			>
+		{/if}
 	{/each}
 </div>
 

@@ -70,6 +70,7 @@
 		@include main;
 		margin-left: 0;
 		min-width: 12vw;
+		width: 20vw;
 		padding: 1rem;
 
 		h3 {
