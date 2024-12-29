@@ -7,24 +7,35 @@
 	let recentHistArr = [];
 
 	async function getInfoArr(count = 20) {
-		const res = await fetch('/api/common/log', {
+		await fetch('/api/common/log', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ count })
-		});
-		recentHistArr = await res.json();
-		// recentHistArr.reverse();
-		let titleSet = new Set();
-		recentHistArr = recentHistArr.filter(hist => {
-			if (titleSet.has(hist.fullTitle)) {
-				return false;
-			} else {
-				titleSet.add(hist.fullTitle);
-				return true;
-			}
 		})
+			.then(async (res) => {
+				if (res.status >= 400 && res.status < 600) {
+					throw new Error((await res.json()).message);
+				} else {
+					recentHistArr = await res.json();
+					// recentHistArr.reverse();
+					let titleSet = new Set();
+					recentHistArr = recentHistArr.filter((hist) => {
+						if (titleSet.has(hist.fullTitle)) {
+							return false;
+						} else {
+							titleSet.add(hist.fullTitle);
+							return true;
+						}
+					});
+				}
+			})
+			.catch((e) => {
+				if (e.message !== 'Unauthorized') {
+					console.error(e);
+				}
+			});
 	}
 
 	function parseTime(time) {
@@ -44,7 +55,8 @@
 	{#each recentHistArr as hist, i}
 		{#if i <= 10}
 			<div>
-				<a href="/r/{encodeFullTitle(hist.fullTitle)}">{hist.fullTitle}</a> <span>{parseTime(hist.createdAt)}</span>
+				<a href="/r/{encodeFullTitle(hist.fullTitle)}">{hist.fullTitle}</a>
+				<span>{parseTime(hist.createdAt)}</span>
 			</div>
 			<hr />
 		{/if}

@@ -1,5 +1,5 @@
 <script>
-	import HangulSearcher from 'hangul-search';
+	import HangulSearcher from 'hangul-searcher';
 	import { Utils } from 'ken-wiki';
 
 	const encodeFullTitle = Utils.encodeFullTitle;

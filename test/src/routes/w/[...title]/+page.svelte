@@ -49,7 +49,7 @@
 	async function previewDoc() {
 		removePopupListener();
 
-		const res = await fetch('/api/preview', {
+		const res = await fetch('/api/common/preview', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
