@@ -14,8 +14,6 @@ export async function load({ params }) {
 		error(401, JSON.stringify({ fullTitle, errorTitle: e.toString(), errorStack: e.stack}));
 	}
 
-	console.log(data);
-
 	if (data.status === 'exact') {
 		redirect(303, `/r/${Utils.encodeFullTitle(data.result)}`);
 	} else {

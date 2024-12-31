@@ -9,23 +9,23 @@
 {#if diff === null}
 	<p>존재하지 않는 문서입니다.</p>
 {:else}
-    <pre>
+    <p>
         {#each diff as part}
             {#if part.added}
                 <span class="added">{part.value}</span>
             {:else if part.removed}
                 <span class="removed">{part.value}</span>
             {:else}
-                <span>{part.value}</span>
+                {part.value}
             {/if}
         {/each}
-    </pre>
+    </p>
 {/if}
 
 <style lang="scss">
 
-    pre {
-        white-space: pre-line;
+    p {
+        white-space: pre;
         padding: 1rem;
         border: .1rem black solid;
     }

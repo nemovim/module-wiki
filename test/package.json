@@ -16,7 +16,8 @@
 		"sass": "^1.83.0",
 		"svelte": "^5.0.0",
 		"svelte-preprocess": "^6.0.3",
-		"vite": "^5.4.11"
+		"vite": "^5.4.11",
+		"vite-plugin-node-polyfills": "^0.22.0"
 	},
 	"dependencies": {
 		"ken-wiki": "^0.1.3",
