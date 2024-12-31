@@ -1,5 +1,5 @@
 import { redirect, error } from '@sveltejs/kit';
-import { handle as authenticationHandle } from './auth';
+import { handle as authenticationHandle } from './auth.js';
 import { sequence } from '@sveltejs/kit/hooks';
 import { WikiDB, WikiManager } from 'ken-wiki';
 import { WIKI_MONGO_URI } from '$env/static/private';
