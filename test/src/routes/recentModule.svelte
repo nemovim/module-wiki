@@ -55,7 +55,7 @@
 	{#each recentHistArr as hist, i}
 		{#if i <= 10}
 			<div>
-				<a href="/r/{encodeFullTitle(hist.fullTitle)}">{hist.fullTitle}</a>
+				<a title="{hist.fullTitle}" href="/r/{encodeFullTitle(hist.fullTitle)}">{hist.fullTitle}</a>
 				<span>{parseTime(hist.createdAt)}</span>
 			</div>
 			<hr />

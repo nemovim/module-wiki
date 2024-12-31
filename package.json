@@ -16,8 +16,9 @@
   "homepage": "https://github.com/nemovim/ken-wiki#readme",
   "dependencies": {
     "diff": "^5.1.0",
+    "es-hangul": "^2.2.4",
     "hangul-searcher": "^1.0.4",
-    "ken-markup": "^1.0.3",
+    "ken-markup": "^1.0.4",
     "mongoose": "^8.2.3",
     "xss": "^1.0.15"
   }

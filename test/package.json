@@ -29,7 +29,6 @@
 	"type": "module",
 	"dependencies": {
 		"@auth/sveltekit": "^1.7.4",
-		"es-hangul": "^2.2.4",
 		"ken-wiki": "file:..",
 		"sass": "^1.77.8",
 		"xss": "^1.0.15"
