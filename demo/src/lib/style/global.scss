@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap'); 
+// @font-face {
+// 	font-family: 'NanumGothic';
+// 	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+// }
+
+@font-face {
+    font-family: 'NanumSquareNeo';
+	font-weight: 100;
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.ttf) format("truetype");
+	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo';
+	font-weight: normal;
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf) format("truetype");
+	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo';
+	font-weight: bold;
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.ttf) format("truetype");
+	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+}
+
+@font-face {
+    font-family: 'NanumSquareNeo';
+	font-weight: 900;
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf) format("truetype");
+	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+}
+
+:root {
+    --main-color1: rgb(0, 50, 104);
+    --main-color2: rgb(0, 132, 202);
+    --main-color3: rgb(21, 192, 242);
+    --main-color4: rgb(100, 50, 250);
+    --gray-color1: gray;
+    --gray-color2: rgb(230, 230, 230);
+    --gray-color3: rgb(245, 245, 245);
+}
+
+* {
+    // font-family: 'NanumSquareNeo';
+	font-family: 'NanumGothic';
+    padding: 0;
+    margin: 0;
+    line-height: 1.5;
+}
+
+html {
+    font-size: 16px;
+    background-color: white;
+}
+
+@media (max-width: 1200px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 800px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+body {
+    background-color: var(--gray-color3);
+}
+
+a {
+    text-decoration-line: none;
+    color: var(--main-color4);
+}
+
+a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+    text-decoration-thickness: 0.05rem;
+}
+
+s {
+    color: var(--gray-color1);
+    text-decoration-thickness: 0.05rem;
+}
+
+s:hover {
+    text-decoration: none;
+}
+
+u {
+    text-underline-offset: 0.2rem;
+    text-decoration-thickness: 0.05rem;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: solid grey 0.05rem;
+    background-color: var(--gray-color3);
+}
+
+button,
+label.button {
+    padding: 0.3rem 0.8rem;
+    border: solid black 0.1rem;
+    background-color: white;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+button:hover,
+label.button:hover {
+    cursor: pointer;
+    background-color: var(--gray-color3);
+}

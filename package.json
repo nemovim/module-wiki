@@ -1,0 +1,38 @@
+{
+  "name": "module-wiki",
+  "version": "0.1.0",
+  "description": "A modularized wiki",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemovim/module-wiki.git"
+  },
+  "keywords": [
+    "module",
+    "wiki"
+  ],
+  "author": "nemovim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nemovim/module-wiki/issues"
+  },
+  "homepage": "https://github.com/nemovim/module-wiki#readme",
+  "dependencies": {
+    "diff": "^7.0.0",
+    "es-hangul": "^2.3.1",
+    "hangul-searcher": "^2.0.1",
+    "ken-markup": "^2.0.5",
+    "mongoose": "^8.12.1",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.1",
+    "@types/node": "^22.13.10"
+  }
+}

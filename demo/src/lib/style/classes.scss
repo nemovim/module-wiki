@@ -1,0 +1,23 @@
+.hidden {
+	display: none !important;
+}
+
+.caution {
+	// border: rgb(255, 100, 100) .1rem solid;
+	// border-radius: .5rem;
+
+	border-bottom: solid .1rem red;
+	border-top: solid .1rem red;
+	background-color: rgb(255, 240, 240);
+
+	padding: .1rem .5rem;
+	margin-bottom: .5rem;
+}
+
+.external-link {
+	color: green;
+}
+
+.nonexistent-link {
+	color: red;
+}
