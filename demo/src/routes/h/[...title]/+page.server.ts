@@ -1,14 +1,14 @@
 import manageError from '$lib/utils/manageError';
-import { getHistsByFullTitle } from 'module-wiki';
+import { getDocLogsByFullTitle } from 'module-wiki';
 
 export async function load({ params, locals }) {
 	const fullTitle = params.title;
 
 	try {
-		const histArr = await getHistsByFullTitle(fullTitle, locals.user, -11, -1) || [];
+		const logArr = await getDocLogsByFullTitle(fullTitle, locals.user, -11, -1) || [];
 		return {
 			fullTitle,
-			histArr: JSON.stringify(histArr),
+			logArr: JSON.stringify(logArr),
 		};
 	} catch (e) {
 		manageError(e, fullTitle);

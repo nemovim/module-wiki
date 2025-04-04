@@ -5,6 +5,11 @@ import type { DocAction } from '../types/log';
 
 export default class AuthorityManager {
 
+    static isGroup(group: string): boolean {
+        const groupArr: Group[] = ['none', 'any', 'guest', 'user', 'dev', 'system', 'manager', 'blocked'];
+        return groupArr.includes(group as Group);
+    }
+
     static getSystemUser(): User {
         return {
             email: '<SYSTEM>@<SYSTEM>' as UserEmail,
@@ -13,7 +18,7 @@ export default class AuthorityManager {
         }
     }
 
-    static canWriteNewWiki(userGroup: Group): boolean {
+    static canCreateWiki(userGroup: Group): boolean {
         return ['system', 'manager', 'dev'].includes(userGroup);
     }
 
@@ -28,20 +33,23 @@ export default class AuthorityManager {
     }
 
     static canDo(action: DocAction, docInfo: Info, userGroup: Group): boolean {
-        if (action === 'state') {
-            return this.isAuthorized(docInfo.authority[action], userGroup);
-        } else if (action === 'read') {
-            return this.isAuthorized(docInfo.authority[action], userGroup) || (userGroup === 'blocked' && (docInfo.authority[action] || []).includes('any'));
-        } else if (docInfo.type === 'category') {
-            if (action === 'write' && (docInfo.state === 'deleted' || docInfo.state === 'new'))
-                return userGroup === 'system';
-            else if (action === 'delete' || action === 'move')
-                return userGroup === 'system';
-            else
-                return this.isAuthorized(docInfo.authority[action], userGroup) && (docInfo.state !== 'forbidden');
-        } else {
-            return this.isAuthorized(docInfo.authority[action], userGroup) && (docInfo.state !== 'forbidden');
+        if (userGroup === 'system')
+            return true;
+        if ((docInfo.authority[action] || []).includes('none'))
+            return false;
+
+        if (docInfo.state === 'forbidden') {
+            if (!['dev', 'manager'].includes(userGroup) || ['create', 'edit'].includes(action))
+                throw new Error('This document is forbidden!')
+            else return true;
         }
+        if (action === 'change_authority' && (docInfo.authority[action] || []).includes('none'))
+            return false;
+
+        if (action === 'read' && userGroup === 'blocked' && (docInfo.authority[action] || []).includes('any'))
+            return true;
+
+        return this.isAuthorized(docInfo.authority[action], userGroup);
     }
 
     static canApplyPenalty(penalizedGroup: Group, userGroup: Group): boolean {

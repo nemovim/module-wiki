@@ -1,5 +1,4 @@
 <script lang="ts">
-    import manageError from '$lib/utils/manageError';
     import postReq from '$lib/utils/postReq';
     import { encodeFullTitle } from 'module-wiki';
 
@@ -10,6 +9,9 @@
     async function renameUser(): Promise<void> {
         const name = prompt('새로운 이름을 입력하세요.');
         if (!name) return;
+
+        if (!confirm('변경할 시 30일동안 재변경이 불가합니다.'))
+            return;
 
         const res = await postReq('/api/rename', { userName, name });
 

@@ -11,6 +11,7 @@ import MarkupUtils from '../utils/markup';
 
 import DocManager from './doc';
 import AuthorityManager from './authority';
+import { Hist } from '../types/hist';
 
 export default class CategoryManager {
     static async createCategoryMarkupByCategorizedArr(categorizedArr: DocId[]): Promise<string> {
@@ -59,16 +60,13 @@ export default class CategoryManager {
         }
     }
 
-    static async categorizeDoc(prevDoc: Partial<Doc> & { markup: string, docId: DocId } | null, nextDoc: Partial<Doc> & { markup: string, docId: DocId }, isDeleted = false): Promise<void> {
-
+    static checkCategory(markup: string, fullTitle: string): string {
         const categoryTitleArr = WikiTranslator.getCategoryTitleArr(
-            nextDoc.markup
+            markup
         );
 
-        if (categoryTitleArr.length === 0) {
-            if (!isDeleted) {
-                nextDoc.markup = '[#[미분류]]\n' + nextDoc.markup;
-            }
+        if (categoryTitleArr.length === 0 && fullTitle !== '분류:분류') {
+            markup = '[#[미분류]]\n' + markup;
         } else if (
             categoryTitleArr.includes('미분류') &&
             categoryTitleArr.length >= 2
@@ -76,20 +74,31 @@ export default class CategoryManager {
             throw new Error(
                 'A document cannot be categorized into both Uncategorized-category and others at the same time!'
             );
+        } else if (fullTitle === '분류:분류') {
+            throw new Error('The categorized category cannot be categorized into other categories!');
         }
 
+        return markup;
+    }
+
+    static async categorizeDoc(docId: DocId, prevMarkup: string, nextMarkup: string): Promise<void> {
+
+
         const addCategoryFullTitleArr = TitleUtils.setPrefixToTitleArr(
-            this.getAddCategoryTitleArr(prevDoc?.markup || null, nextDoc.markup),
+            this.getAddCategoryTitleArr(prevMarkup, nextMarkup),
             '분류'
         );
         const removeCategoryFullTitleArr = TitleUtils.setPrefixToTitleArr(
-            this.getRemoveCategoryTitleArr(prevDoc?.markup || null, nextDoc.markup),
+            this.getRemoveCategoryTitleArr(prevMarkup, nextMarkup),
             '분류'
         );
 
+        // console.log(`add: ${addCategoryFullTitleArr}`)
+        // console.log(`remove: ${removeCategoryFullTitleArr}`)
+
         // Adding should be the first.
-        await this.addDocToCategories(nextDoc.docId, addCategoryFullTitleArr);
-        await this.removeDocFromCategories(nextDoc.docId, removeCategoryFullTitleArr);
+        await this.addDocToCategories(docId, addCategoryFullTitleArr);
+        await this.removeDocFromCategories(docId, removeCategoryFullTitleArr);
     }
 
     static async addDocToCategories(docId: DocId, addCategoryFullTitleArr: string[]) {
@@ -106,33 +115,26 @@ export default class CategoryManager {
 
             for (let idx=0; idx<addCategoryInfoArr.length; idx++) {
                 const categoryInfo = addCategoryInfoArr[idx];
-                if (categoryInfo === null) {
+                if (categoryInfo === null || categoryInfo.state === 'deleted') {
                     // new category
-                    const newCategoryDoc =
-                        DocManager.createNewDocByFullTitle(
-                            addCategoryFullTitleArr[idx],
-                            AuthorityManager.getSystemUser(),
-                            {
-                                categorizedArr: [docId]
-                            }
-                        );
-                    newCategoryIdArr.push(newCategoryDoc.docId);
+                    const fullTitle = addCategoryFullTitleArr[idx];
+                    const prevDoc = await DocManager.getDocByFullTitle(fullTitle, -1);
+                    const newDoc = DocManager.createNewEmptyDocByFullTitle(fullTitle);
+
+                    if (prevDoc && prevDoc.state === 'deleted') {
+                        newDoc.authority = prevDoc.authority;
+                        newDoc.docId = prevDoc.docId;
+                        newDoc.revision = prevDoc.revision + 1;
+                    }
+
+                    newDoc.categorizedArr.push(docId);
+                    newDoc.markup = '[#[미분류]]';
+
+                    newCategoryIdArr.push(newDoc.docId);
                     addPromiseArr.push(
-                        DocManager.setNewDocByDoc(newCategoryDoc)
+                        DocManager.createDocByDoc(prevDoc, newDoc, AuthorityManager.getSystemUser())
                     );
-                } else if (categoryInfo.state === 'deleted') {
-                    // deleted category
-                    const categoryDoc =
-                        DocManager.createNextDocByPrevInfo(categoryInfo,
-                            AuthorityManager.getSystemUser(),
-                            '[#[미분류]]',
-                            '분류 생성',
-                        );
-                    categoryDoc.categorizedArr.push(docId);
-                    newCategoryIdArr.push(categoryDoc.docId);
-                    addPromiseArr.push(
-                        DocManager.setDeletedDocByDoc(categoryDoc)
-                    );
+
                 } else {
                     // existing category
                     categoryInfo.categorizedArr.push(docId);
@@ -179,20 +181,18 @@ export default class CategoryManager {
             }
 
             for (let info of deleteInfoArr) {
-                await DocManager.deleteDocByInfo(
-                    info,
+                const prevHist = await HistController.getHistByDocId(info.docId);
+                if (!prevHist)
+                    throw new Error("Hist of existing category doc cannot be null!")
+                const prevDoc = DocManager.createDocByInfoAndHist(info, prevHist);
+                await DocManager.deleteDocByDoc(
+                    prevDoc,
                     AuthorityManager.getSystemUser(),
-                    '분류 삭제',
                 );
             }
 
-            let i =0;
             for (let promise of removePromiseArr) {
-                i++;
                 await promise;
-                if (i > 2) {
-                    throw new Error('kiyao');
-                }
             }
         }
     }

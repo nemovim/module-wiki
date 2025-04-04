@@ -26,29 +26,22 @@ export default class HistController {
         }
     }
 
-    static async getHistsByDocId(docId: DocId, fromRev: number, toRev: number): Promise<Array<HistDoc>> {
-        return await HistModel.find({
-            docId,
-            revision: {
-                $gte: fromRev, $lte: toRev
-            },
-        });
-    }
+    // static async getHistsByDocId(docId: DocId, fromRev: number, toRev: number): Promise<Array<HistDoc>> {
+    //     return await HistModel.find({
+    //         docId,
+    //         revision: {
+    //             $gte: fromRev, $lte: toRev
+    //         },
+    //     });
+    // }
 
     static async setHistByDoc(doc: Doc): Promise<HistDoc> {
         const hist = new HistModel<Hist>({
             docId: doc.docId,
             revision: doc.revision,
             markup: doc.markup,
-            userEmail: doc.userEmail,
-            userName: doc.userName,
-            comment: doc.comment,
-            time: new Date(),
         });
         return await hist.save();
     }
 
-    static async updateNameOfAllHistsByEmail(email: UserEmail, name: UserName) {
-        await HistModel.updateMany({userEmail: email}, {userName: name});
-    }
 }

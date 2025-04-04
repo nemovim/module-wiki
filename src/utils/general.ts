@@ -45,6 +45,27 @@ export default class GeneralUtils {
         }, []);
     }
 
+    static isSameArr<T>(arr1: T[], arr2: T[]): boolean {
+        arr1.sort();
+        arr2.sort();
+        if (arr1.length !== arr2.length)
+            return false;
+        for (let i=0; i<arr1.length; i++) {
+            if (arr1[i] !== arr2[i])
+                return false;
+        }
+        return true;
+    }
+
+    static calcByte(s: string, b?: number, i?: number, c?: number): number {
+        for (
+            b = i = 0;
+            (c = s.charCodeAt(i++));
+            b += c >> 11 ? 3 : c >> 7 ? 2 : 1
+        );
+        return b;
+    }
+
     static choseongArr: string[] = [
         '0',
         '1',

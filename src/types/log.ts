@@ -1,10 +1,10 @@
 import type { HydratedDocument } from 'mongoose';
 import type { DocId } from './doc';
-import type { UserEmail } from './user';
+import type { UserEmail, UserName } from './user';
 import type { PenaltyType } from './penalty';
 
-export type DocAction = 'read' | 'write' | 'move' | 'delete' | 'authority' | 'state';
-export type UserAction = 'signup' | 'signin' | 'edit' | 'change_name' | 'change_group';
+export type DocAction = 'read' | 'create' | 'edit' | 'move' | 'delete' | 'change_authority' | 'change_state';
+export type UserAction = 'signup' | 'change_name' | 'change_group';
 export type PenaltyAction = 'apply' | 'remove';
 
 export interface PenaltyLog {
@@ -19,17 +19,23 @@ export interface PenaltyLog {
 
 export interface UserLog {
     userEmail: UserEmail,
-    comment: string,
+    systemLog: string,
     action: UserAction,
     time: Date,
 }
 
 export interface DocLog {
-    userEmail: UserEmail,
-    comment: string,
-    action: DocAction,
     docId: DocId,
     fullTitle: string,
+    revision: number,
+    delta: number,
+
+    userEmail: UserEmail,
+    userName: UserName,
+    comment: string,
+
+    action: DocAction,
+    systemLog: string,
     time: Date,
 }
 

@@ -5,9 +5,13 @@ const schema_doc = new mongoose.Schema<DocLog>(
     {
         docId: { type: String, required: true },
         fullTitle: { type: String, required: true },
+        revision: { type: Number, required: true },
+        delta: { type: Number, default: 0 },
         userEmail: { type: String, required: true },
-        action: { type: String, required: true },
+        userName: { type: String, required: true },
         comment: { type: String, default: '' },
+        action: { type: String, required: true },
+        systemLog: { type: String, default: '' },
         time: {type: Date, default: new Date()},
     },
     {
@@ -19,7 +23,7 @@ const schema_user = new mongoose.Schema<UserLog>(
     {
         userEmail: { type: String, required: true },
         action: { type: String, required: true },
-        comment: { type: String, default: '' },
+        systemLog: { type: String, default: '' },
         time: {type: Date, default: new Date()},
     },
     {

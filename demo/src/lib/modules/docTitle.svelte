@@ -21,6 +21,7 @@
         else if (pageType === 'backlink') return '(역링크 목록)';
         else if (pageType === 'authority') return '(권한 목록)';
         else if (pageType === 'error') return '(오류 또는 권한 부족)';
+        else if (pageType === 'user') return '(사용자 정보)';
         else return '';
     }
 </script>

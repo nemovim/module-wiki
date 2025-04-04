@@ -21,12 +21,18 @@ const authorizationHandle: Handle = async ({ event, resolve }) => {
 
 	const session = await event.locals.auth();
 
+	console.log(`url: ${event.url.pathname} | session: ${!!session?.user}`)
+
 	if (session?.user?.email) {
 		// Authorized
+		// if (event.url.pathname.startsWith('/signout')) {
+		// 	redirect(303, '/auth/signout');
+		// } else if (event.url.pathname.startsWith('/auth/signout')) {
+		// 	return await resolve(event);
 		if (event.url.pathname.startsWith('/signin') || (!event.url.pathname.startsWith('/api') && !event.params.title)) {
 			redirect(303, '/r/' + encodeFullTitle('위키:대문'));
 		} else {
-			event.params.title = (event.params.title||'').trim();
+			event.params.title = (event.params.title || '').trim();
 
 			let user: User | null = await getUserByEmail(session.user.email);
 			if (user === null) {
@@ -43,7 +49,7 @@ const authorizationHandle: Handle = async ({ event, resolve }) => {
 	} else {
 		// Unauthorized
 		if (event.url.pathname.startsWith('/api')) {
-			error(401, {message: 'Unauthorized', fullTitle: ''});
+			error(401, { message: 'Unauthorized', fullTitle: '' });
 		} else if (event.url.pathname.startsWith('/signin')) {
 			return await resolve(event);
 		} else {

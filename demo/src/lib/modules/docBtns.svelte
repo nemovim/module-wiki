@@ -7,6 +7,7 @@
     import PenaltyBtn from './btns/penaltyBtn.svelte';
     import RenameBtn from './btns/renameBtn.svelte';
     import RegroupBtn from './btns/regroupBtn.svelte';
+    import RestateBtn from './btns/restateBtn.svelte';
     let {
         fullTitle,
         doc,
@@ -92,6 +93,9 @@ __밑줄__
         <button onclick={goToWritePage}>편집</button>
         <button onclick={goToHistoryPage}>역사</button>
         <button onclick={goToBacklinkPage}>역링크</button>
+        {#if doc}
+            <RestateBtn {fullTitle} state={doc.state}/>
+        {/if}
     {:else if pageType === 'backlink'}
         <button onclick={goToReadPage}>열람</button>
         <button onclick={goToWritePage}>편집</button>

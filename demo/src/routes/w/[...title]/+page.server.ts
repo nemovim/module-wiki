@@ -9,7 +9,7 @@ export async function load({ params, locals }) {
 		let doc = await readDocByFullTitle(fullTitle, locals.user);
 
 		if (doc === null) {
-            doc = createNewDocByFullTitle(fullTitle, locals.user);
+            doc = createNewDocByFullTitle(fullTitle);
 			doc.revision = 0;
 		}
 

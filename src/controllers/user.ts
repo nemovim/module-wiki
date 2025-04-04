@@ -25,7 +25,6 @@ export default class UserController {
     }
 
     static async updateGroupByUser(user: UserDoc, group: Group): Promise<UserDoc> {
-        console.log(user)
         user.group = group;
         return await user.save();
     }

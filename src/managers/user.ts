@@ -3,48 +3,67 @@ import type { User, UserDoc, UserEmail, UserName } from '../types/user';
 
 import UserController from '../controllers/user';
 import LogController from '../controllers/log';
-import HistController from '../controllers/hist';
 import AuthorityManager from './authority';
+import { DocLogModel } from '../models/log';
 
 export default class UserManager {
 
     static async signinUserByEmail(email: UserEmail): Promise<User | null> {
+        // TODO: Will this function be used?
         const user = await UserController.getUserByEmail(email);
         if (!user)
             return null;
 
-        await LogController.setUserLogByEmailAndAction(email, 'signin', `name: ${user.name}`);
+        // await LogController.setUserLogByEmailAndAction(email, 'signin', `name: ${user.name}`);
         return user;
 
     }
 
-    static async signupUserByEmailAndName(email: UserEmail, name: UserName): Promise<User> {
+    static async signupUserByEmailAndName(email: UserEmail, name: UserName): Promise<UserDoc> {
+        let user = await UserController.getUserByEmail(email);
+        if (user)
+            throw new Error("This user is already signed up!")
+
+        user = await UserController.getUserByName(name);
+        while (user) {
+            name = (name + '_') as UserName;
+            user = await UserController.getUserByName(name);
+        }
+
         await LogController.setUserLogByEmailAndAction(email, 'signup', `name: ${name}`);
         return await UserController.setUserByEmailAndName(email, name);
     }
 
-    static async changeNameByName(userName: UserName, name: UserName, operator: User): Promise<User> {
+    static async changeNameByName(userName: UserName, newName: UserName, operator: User): Promise<User> {
         const user = await UserController.getUserByName(userName);
         if (!user)
             throw new Error('The user does not exist!');
+        const prevName = user.name;
 
         if (!AuthorityManager.canChangeName(user, operator))
             throw new Error('Cannot change name!');
 
-        const changedUser = await UserController.updateNameByUser(user, name);
-        await HistController.updateNameOfAllHistsByEmail(user.email, name);
-        await LogController.setUserLogByEmailAndAction(user.email, 'change_name', `${user.name}->${name} by ${operator.email}`);
+        const changeNameLog = await LogController.getMostRecentChangeNameLogByEmail(user.email);
+
+        console.log(changeNameLog);
+
+        if (changeNameLog && new Date(changeNameLog.time).getTime() < new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+            throw new Error('You can change your name only once every 30 days.');
+
+        const changedUser = await UserController.updateNameByUser(user, newName);
+        await LogController.updateNamesOfAllDocLogsByEmail(user.email, newName);
+        await LogController.setUserLogByEmailAndAction(user.email, 'change_name', `${prevName}→${newName} by ${operator.email}`);
         return changedUser;
     }
 
-    static async #changeGroupByUser(user: UserDoc|null, group: Group, operator: User) {
+    static async #changeGroupByUser(user: UserDoc | null, group: Group, operator: User) {
         if (!user)
             throw new Error('The user does not exist!');
 
         if (!AuthorityManager.canChangeGroup(user, operator))
             throw new Error('Cannot change group!');
 
-        await LogController.setUserLogByEmailAndAction(user.email, 'change_group', `${user.group}->${group} by ${operator.email}`);
+        await LogController.setUserLogByEmailAndAction(user.email, 'change_group', `${user.group}→${group} by ${operator.email}`);
         return await UserController.updateGroupByUser(user, group);
 
     }
@@ -68,7 +87,7 @@ export default class UserManager {
         if (!user)
             throw new Error('The user does not exist!');
 
-        await HistController.updateNameOfAllHistsByEmail(email, '(삭제된 사용자)' as UserName);
+        await LogController.updateNamesOfAllDocLogsByEmail(email, '(삭제된 사용자)' as UserName);
         await UserController.deleteUserByUser(user);
     }
 

@@ -7,18 +7,13 @@
 
     async function regroupUser(): Promise<void> {
         const group = prompt('새롭게 지정할 그룹 이름을 입력하세요.');
-        if (!group)
-            return;
+        if (!group) return;
 
-        const res = await postReq('/api/regroup', {userName, group});
+        const res = await postReq('/api/regroup', { userName, group });
 
-        if (res.success)
-            alert('정상적으로 처리되었습니다.');
-        else {
-            alert(res.result.fullTitle + ': ' + res.result.message)
-        }
+        if (res.success) alert('정상적으로 처리되었습니다.');
+        else alert(res.result.fullTitle + ': ' + res.result.message);
     }
-
 </script>
 
 <button onclick={regroupUser}>권한</button>

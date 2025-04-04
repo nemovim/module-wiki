@@ -1,8 +1,7 @@
 import type { Info } from './types/info';
-import type { Hist } from './types/hist';
 import type { Doc, DocState } from './types/doc';
 import type { User, UserEmail, UserName } from './types/user';
-import type { DocAction, DocLog } from './types/log';
+import type { DocAction, DocLog, DocLogDoc } from './types/log';
 import type { Authority, Group } from './types/authority';
 import type { PenaltyDoc, PenaltyId } from './types/penalty';
 
@@ -36,8 +35,10 @@ export async function activateWiki(MONGO_URI: string): Promise<boolean> {
         await mongoose.connection.transaction(async () => {
             await CommonController.initCommon();
             const systemUser = AuthorityManager.getSystemUser();
-            await UserManager.signupUserByEmailAndName(systemUser.email, systemUser.name);
-            await UserManager.changeGroupByEmail(systemUser.email, 'system', systemUser);
+            const systemUserDoc = await UserManager.signupUserByEmailAndName(systemUser.email, systemUser.name);
+            systemUserDoc.group = 'system';
+            await systemUserDoc.save();
+            // await UserManager.changeGroupByEmail(systemUser.email, 'system', systemUser);
             await WikiManager.init();
         });
     }
@@ -116,8 +117,8 @@ export async function removePenaltyById(penaltyId: PenaltyId, comment: string, p
 }
 
 // ================ Doc Module ================
-export function createNewDocByFullTitle(fullTitle: string, user: User, doc?: Partial<Doc>): Doc {
-    return DocManager.createNewDocByFullTitle(fullTitle, user, doc);
+export function createNewDocByFullTitle(fullTitle: string): Doc {
+    return DocManager.createNewEmptyDocByFullTitle(fullTitle);
 }
 
 export async function readDocByFullTitle(fullTitle: string, user: User, revision = -1): Promise<Doc | null> {
@@ -140,16 +141,18 @@ export async function moveDocByFullTitle(fullTitle: string, user: User, newFullT
     });
 }
 
-export async function updateAuthorityByFullTitle(fullTitle: string, user: User, authority: Authority): Promise<boolean> {
+export async function updateAuthorityByFullTitle(fullTitle: string, user: User, action: DocAction, groupArr: Group[], comment=''): Promise<boolean> {
+    comment = GeneralUtils.ignoreHtml(comment);
     return await mongoose.connection.transaction(async () => {
-        await WikiManager.updateAuthorityByFullTitle(fullTitle, user, authority);
+        await WikiManager.changeAuthorityByFullTitle(fullTitle, user, action, groupArr, comment);
         return true;
     });
 }
 
-export async function updateStateByFullTitle(fullTitle: string, user: User, state: DocState): Promise<boolean> {
+export async function updateStateByFullTitle(fullTitle: string, user: User, isAllowed: boolean, comment=''): Promise<boolean> {
+    comment = GeneralUtils.ignoreHtml(comment);
     return await mongoose.connection.transaction(async () => {
-        await WikiManager.updateStateByFullTitle(fullTitle, user, state);
+        await WikiManager.changeStateByFullTitle(fullTitle, user, isAllowed, comment);
         return true;
     });
 }
@@ -161,7 +164,6 @@ export async function deleteDocByFullTitle(fullTitle: string, user: User, commen
         return true;
     });
 }
-
 
 // ================ Other Doc Modules ================
 export async function compareDocByFullTitle(fullTitle: string, user: User, oldRev: number, newRev: number): Promise<{ diff: Change[], oldDoc: Doc | null, newDoc: Doc | null }> {
@@ -178,8 +180,12 @@ export async function previewDoc(doc: Doc): Promise<string> {
 
 
 // ================ History Module ================
-export async function getHistsByFullTitle(fullTitle: string, user: User, fromRev: number, toRev: number = -1): Promise<Hist[] | null> {
-    return await WikiManager.getHistsByFullTitle(fullTitle, user, fromRev, toRev);
+export async function getDocLogsByFullTitle(fullTitle: string, user: User, fromRev: number, toRev: number = -1): Promise<DocLogDoc[] | null> {
+    return await WikiManager.getDocLogsByFullTitle(fullTitle, user, fromRev, toRev);
+}
+
+export async function getDocLogsByUserName(userName: string, cnt=20): Promise<DocLogDoc[]> {
+    return await LogController.getDocLogsByUserName(userName as UserName, cnt);
 }
 
 
