@@ -5,6 +5,12 @@
     import { afterNavigate } from '$app/navigation';
     import { addPopupListener } from '$lib/utils/footnotePopup';
 	import { onMount } from 'svelte';
+    import { injectAnalytics } from '@vercel/analytics/sveltekit';
+    import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+    injectAnalytics();
+    injectSpeedInsights();
+
 
     let { children } = $props();
 
