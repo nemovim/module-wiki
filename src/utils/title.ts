@@ -1,6 +1,6 @@
 import type { DocType } from '../types/doc';
 
-import GeneralUtils from './general';
+import GeneralUtils from './general.js';
 
 export default class TitleUtils {
     static encodeFullTitle(fullTitle: string): string {

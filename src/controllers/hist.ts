@@ -1,8 +1,7 @@
 import type { Doc, DocId } from '../types/doc';
-import type { UserEmail, UserName } from '../types/user';
 import type { Hist, HistDoc } from '../types/hist';
 
-import HistModel from '../models/hist';
+import HistModel from '../models/hist.js';
 
 export default class HistController {
 

@@ -1,12 +1,12 @@
 import type { User, UserName } from '../types/user';
 import type { PenaltyDoc, PenaltyType, PenaltyId } from '../types/penalty';
 
-import LogController from '../controllers/log';
-import UserController from '../controllers/user';
-import PenaltyController from '../controllers/penalty';
+import LogController from '../controllers/log.js';
+import UserController from '../controllers/user.js';
+import PenaltyController from '../controllers/penalty.js';
 
-import AuthorityManager from './authority';
-import UserManager from './user';
+import AuthorityManager from './authority.js';
+import UserManager from './user.js';
 
 export default class PenaltyManager {
 

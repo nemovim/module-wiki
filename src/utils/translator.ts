@@ -1,6 +1,6 @@
 import Translator from 'ken-markup';
-import TitleUtils from './title';
-import GeneralUtils from './general';
+import TitleUtils from './title.js';
+import GeneralUtils from './general.js';
 
 export default class WikiTranslator {
     static categoryReg: RegExp;

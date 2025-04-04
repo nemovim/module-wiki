@@ -1,6 +1,6 @@
 import type { BacklinkDoc, Backlink } from '../types/backlink';
 
-import BacklinkModel from '../models/backlink';
+import BacklinkModel from '../models/backlink.js';
 
 export default class BacklinkController {
 

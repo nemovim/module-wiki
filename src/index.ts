@@ -1,8 +1,8 @@
 import type { Info } from './types/info';
-import type { Doc, DocState } from './types/doc';
+import type { Doc } from './types/doc';
 import type { User, UserEmail, UserName } from './types/user';
 import type { DocAction, DocLog, DocLogDoc } from './types/log';
-import type { Authority, Group } from './types/authority';
+import type { Group } from './types/authority';
 import type { PenaltyDoc, PenaltyId } from './types/penalty';
 
 import type { Change } from 'diff';
@@ -11,21 +11,21 @@ import type { SearchResult } from 'hangul-searcher';
 // import xss from 'xss';
 import mongoose from 'mongoose';
 
-import DBManager from './managers/db';
-import WikiManager from './managers/wiki';
-import AuthorityManager from './managers/authority';
-import DocManager from './managers/doc';
-import BacklinkManager from './managers/backlink';
-import PenaltyManager from './managers/penalty';
-import UserManager from './managers/user';
+import DBManager from './managers/db.js';
+import WikiManager from './managers/wiki.js';
+import AuthorityManager from './managers/authority.js';
+import DocManager from './managers/doc.js';
+import BacklinkManager from './managers/backlink.js';
+import PenaltyManager from './managers/penalty.js';
+import UserManager from './managers/user.js';
 
-import LogController from './controllers/log';
-import UserController from './controllers/user';
-import CommonController from './controllers/common';
+import LogController from './controllers/log.js';
+import UserController from './controllers/user.js';
+import CommonController from './controllers/common.js';
 
-import TitleUtils from './utils/title';
-import WikiTranslator from './utils/translator';
-import GeneralUtils from './utils/general';
+import TitleUtils from './utils/title.js';
+import WikiTranslator from './utils/translator.js';
+import GeneralUtils from './utils/general.js';
 
 // ================ Initialization ================
 export async function activateWiki(MONGO_URI: string): Promise<boolean> {
@@ -225,13 +225,13 @@ export async function createBacklinkHtmlByFullTitle(fullTitle: string): Promise<
 // }
 
 // ================ Types ================
-export type * from './types/user';
-export type * from './types/log';
-export type * from './types/info';
-export type * from './types/common';
-export type * from './types/hist';
-export type * from './types/doc';
 export type * from './types/authority';
 export type * from './types/backlink';
+export type * from './types/common';
+export type * from './types/doc';
+export type * from './types/hist';
+export type * from './types/info';
+export type * from './types/log';
 export type * from './types/penalty';
+export type * from './types/user';
 export type { SearchResult } from 'hangul-searcher';

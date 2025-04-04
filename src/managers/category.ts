@@ -1,17 +1,16 @@
 import type { Info } from '../types/info';
-import type { Doc, DocId } from '../types/doc';
+import type { DocId } from '../types/doc';
 
-import InfoController from '../controllers/info';
-import HistController from '../controllers/hist';
+import InfoController from '../controllers/info.js';
+import HistController from '../controllers/hist.js';
 
-import WikiTranslator from '../utils/translator';
-import GeneralUtils from '../utils/general';
-import TitleUtils from '../utils/title';
-import MarkupUtils from '../utils/markup';
+import WikiTranslator from '../utils/translator.js';
+import GeneralUtils from '../utils/general.js';
+import TitleUtils from '../utils/title.js';
+import MarkupUtils from '../utils/markup.js';
 
-import DocManager from './doc';
-import AuthorityManager from './authority';
-import { Hist } from '../types/hist';
+import DocManager from './doc.js';
+import AuthorityManager from './authority.js';
 
 export default class CategoryManager {
     static async createCategoryMarkupByCategorizedArr(categorizedArr: DocId[]): Promise<string> {

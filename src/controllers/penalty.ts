@@ -1,7 +1,7 @@
 import type { Penalty, PenaltyId, PenaltyDoc, PenaltyType } from '../types/penalty';
 import type { UserEmail } from '../types/user';
 
-import PenaltyModel from '../models/penalty';
+import PenaltyModel from '../models/penalty.js';
 
 export default class PenaltyController {
 

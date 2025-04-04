@@ -1,19 +1,20 @@
 import type { Info } from '../types/info';
 import type { Doc, DocId, DocState } from '../types/doc';
+import type { DocAction } from '../types/log';
 import type { Hist } from '../types/hist';
 import type { User } from '../types/user';
-import type { Authority, Group } from '../types/authority';
+import type { Group } from '../types/authority';
 
-import InfoController from '../controllers/info';
-import HistController from '../controllers/hist';
-import CommonController from '../controllers/common';
-import LogController from '../controllers/log';
+import InfoController from '../controllers/info.js';
+import HistController from '../controllers/hist.js';
+import CommonController from '../controllers/common.js';
+import LogController from '../controllers/log.js';
 
-import TitleUtils from '../utils/title';
-import GeneralUtils from '../utils/general';
+import BacklinkManager from './backlink.js';
 
-import BacklinkManager from './backlink';
-import { DocAction } from '../types/log';
+import TitleUtils from '../utils/title.js';
+import GeneralUtils from '../utils/general.js';
+
 
 export default class DocManager {
 

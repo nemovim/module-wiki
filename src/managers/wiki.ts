@@ -1,21 +1,21 @@
 import type { Doc, DocState } from '../types/doc';
-import type { Authority, Group } from '../types/authority';
+import type { Group } from '../types/authority';
 import type { User } from '../types/user';
+import type { DocAction, DocLogDoc } from '../types/log';
 
 import HangulSearcher, { type SearchResult } from 'hangul-searcher';
 import { type Change, diffWords } from 'diff';
 
-import AuthorityManager from './authority';
-import CategoryManager from './category';
-import DocManager from './doc';
+import AuthorityManager from './authority.js';
+import CategoryManager from './category.js';
+import DocManager from './doc.js';
 
-import WikiTranslator from '../utils/translator';
-import TitleUtils from '../utils/title';
+import WikiTranslator from '../utils/translator.js';
+import TitleUtils from '../utils/title.js';
 
-import InfoController from '../controllers/info';
-import CommonController from '../controllers/common';
-import LogController from '../controllers/log';
-import { DocAction, DocLogDoc } from '../types/log';
+import InfoController from '../controllers/info.js';
+import CommonController from '../controllers/common.js';
+import LogController from '../controllers/log.js';
 
 export default class WikiManager {
 

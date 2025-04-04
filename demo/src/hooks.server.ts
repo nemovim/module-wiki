@@ -21,14 +21,10 @@ const authorizationHandle: Handle = async ({ event, resolve }) => {
 
 	const session = await event.locals.auth();
 
-	console.log(`url: ${event.url.pathname} | session: ${!!session?.user}`)
+	// console.log(`url: ${event.url.pathname} | session: ${!!session?.user}`)
 
 	if (session?.user?.email) {
 		// Authorized
-		// if (event.url.pathname.startsWith('/signout')) {
-		// 	redirect(303, '/auth/signout');
-		// } else if (event.url.pathname.startsWith('/auth/signout')) {
-		// 	return await resolve(event);
 		if (event.url.pathname.startsWith('/signin') || (!event.url.pathname.startsWith('/api') && !event.params.title)) {
 			redirect(303, '/r/' + encodeFullTitle('위키:대문'));
 		} else {

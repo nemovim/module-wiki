@@ -1,7 +1,7 @@
 import { getChoseong } from 'es-hangul';
-import GeneralUtils from './general';
-import WikiTranslator from './translator';
-import TitleUtils from './title';
+import GeneralUtils from './general.js';
+import WikiTranslator from './translator.js';
+import TitleUtils from './title.js';
 
 export default class MarkupUtils {
     static createChoseongMapByTitleArr(titleArr: string[]): Map<string, string[]> {

@@ -3,9 +3,8 @@ import type { DocAction, UserAction, DocLogDoc, DocLog, UserLogDoc, UserLog, Pen
 import type { Penalty } from '../types/penalty';
 import type { User, UserEmail, UserName } from '../types/user';
 
-import { UserLogModel, DocLogModel, PenaltyLogModel } from '../models/log';
-import GeneralUtils from '../utils/general';
-import { Group } from '../types/authority';
+import { UserLogModel, DocLogModel, PenaltyLogModel } from '../models/log.js';
+import GeneralUtils from '../utils/general.js';
 
 export default class LogController {
 

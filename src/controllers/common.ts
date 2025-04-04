@@ -1,6 +1,6 @@
 import type { CommonDoc } from '../types/common';
 
-import CommonModel from '../models/common';
+import CommonModel from '../models/common.js';
 
 export default class CommonController {
 

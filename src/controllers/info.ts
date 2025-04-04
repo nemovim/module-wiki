@@ -1,7 +1,7 @@
 import type { InfoDoc, Info } from '../types/info';
 import type { Doc, DocId } from '../types/doc';
 
-import InfoModel from '../models/info';
+import InfoModel from '../models/info.js';
 
 export default class InfoController {
 

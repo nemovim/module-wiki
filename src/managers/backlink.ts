@@ -1,10 +1,10 @@
 import type { Doc } from '../types/doc';
 
-import BacklinkController from '../controllers/backlink';
+import BacklinkController from '../controllers/backlink.js';
 
-import GeneralUtils from '../utils/general';
-import MarkupUtils from '../utils/markup';
-import WikiTranslator from '../utils/translator';
+import GeneralUtils from '../utils/general.js';
+import MarkupUtils from '../utils/markup.js';
+import WikiTranslator from '../utils/translator.js';
 
 export default class BacklinkManager {
     static async createBacklinkMarkupByFullTitle(fullTitle: string): Promise<string|null> {

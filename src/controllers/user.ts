@@ -1,7 +1,7 @@
 import type { UserDoc, User, UserEmail, UserName } from '../types/user';
 import type { Group } from '../types/authority';
 
-import UserModel from '../models/user';
+import UserModel from '../models/user.js';
 
 export default class UserController {
     static async getUserByEmail(email: UserEmail): Promise<UserDoc|null> {

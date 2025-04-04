@@ -1,10 +1,9 @@
 import type { Group } from '../types/authority';
 import type { User, UserDoc, UserEmail, UserName } from '../types/user';
 
-import UserController from '../controllers/user';
-import LogController from '../controllers/log';
-import AuthorityManager from './authority';
-import { DocLogModel } from '../models/log';
+import UserController from '../controllers/user.js';
+import LogController from '../controllers/log.js';
+import AuthorityManager from './authority.js';
 
 export default class UserManager {
 
