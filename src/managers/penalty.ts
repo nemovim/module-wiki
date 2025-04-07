@@ -6,7 +6,7 @@ import PenaltyController from '../controllers/penalty.js';
 
 import AuthorityManager from './authority.js';
 import UserManager from './user.js';
-import LogManager from './log';
+import LogManager from './log.js';
 
 export default class PenaltyManager {
 

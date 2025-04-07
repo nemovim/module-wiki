@@ -1,5 +1,5 @@
 import type { Info } from '../types/info';
-import type { Doc, DocId, DocState } from '../types/doc';
+import type { Doc, DocId } from '../types/doc';
 import type { DocAction } from '../types/log';
 import type { Hist } from '../types/hist';
 import type { User } from '../types/user';
@@ -11,11 +11,11 @@ import CommonController from '../controllers/common.js';
 import LogController from '../controllers/log.js';
 
 import BacklinkManager from './backlink.js';
+import LogManager from './log.js';
+import CategoryManager from './category.js';
 
 import TitleUtils from '../utils/title.js';
 import GeneralUtils from '../utils/general.js';
-import LogManager from './log';
-import CategoryManager from './category';
 
 
 export default class DocManager {

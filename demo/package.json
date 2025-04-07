@@ -26,6 +26,6 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
-		"module-wiki": "^0.1.4"
+		"module-wiki": "^0.1.5"
 	}
 }

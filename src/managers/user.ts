@@ -3,9 +3,10 @@ import type { User, UserDoc, UserEmail, UserName } from '../types/user';
 
 import UserController from '../controllers/user.js';
 import LogController from '../controllers/log.js';
+import CommonController from '../controllers/common.js';
+
 import AuthorityManager from './authority.js';
-import LogManager from './log';
-import CommonController from '../controllers/common';
+import LogManager from './log.js';
 
 export default class UserManager {
 

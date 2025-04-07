@@ -1,15 +1,16 @@
-import type { Doc, DocId } from '../types/doc';
-import type { DocAction, UserAction, DocLogDoc, DocLog, UserLogDoc, UserLog, PenaltyLog, PenaltyAction, PenaltyLogDoc } from '../types/log';
+import type { Doc } from '../types/doc';
+import type { DocAction, UserAction, DocLogDoc, DocLog, UserLogDoc, PenaltyLog, PenaltyAction, PenaltyLogDoc } from '../types/log';
 import type { Penalty } from '../types/penalty';
 import type { User, UserEmail, UserName } from '../types/user';
 
+import CommonController from '../controllers/common.js';
+import LogController from '../controllers/log.js';
+import UserController from '../controllers/user.js';
+
+import DocManager from './doc.js';
+import AuthorityManager from './authority.js';
+
 import GeneralUtils from '../utils/general.js';
-import CommonController from '../controllers/common';
-import LogController from '../controllers/log';
-import UserController from '../controllers/user';
-import DocManager from './doc';
-import AuthorityManager from './authority';
-import UserManager from './user';
 
 export default class LogManager {
 

@@ -18,6 +18,7 @@ import DocManager from './managers/doc.js';
 import BacklinkManager from './managers/backlink.js';
 import PenaltyManager from './managers/penalty.js';
 import UserManager from './managers/user.js';
+import LogManager from './managers/log.js';
 
 import LogController from './controllers/log.js';
 import UserController from './controllers/user.js';
@@ -26,7 +27,6 @@ import CommonController from './controllers/common.js';
 import TitleUtils from './utils/title.js';
 import WikiTranslator from './utils/translator.js';
 import GeneralUtils from './utils/general.js';
-import LogManager from './managers/log';
 
 // ================ Initialization ================
 export async function activateWiki(MONGO_URI: string): Promise<boolean> {
