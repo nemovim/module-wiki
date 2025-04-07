@@ -48,6 +48,9 @@
     <DocHeader {fullTitle} {doc} pageType={'write'} />
 
     <article id="mainArticle">
+        {#if doc?.state === 'hidden'}
+        <p>숨겨진 문서는 편집이 불가합니다.</p>
+        {:else}
         <form method="POST">
             <!-- svelte-ignore a11y_autofocus -->
             <textarea
@@ -70,6 +73,7 @@
             <label for="saveBtn" class="button">저장</label>
         </div>
         <div id="previewDiv" class="kmu">{@html previewHTML}</div>
+        {/if}
     </article>
 {:else}
     <p>Loading...</p>

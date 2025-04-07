@@ -26,6 +26,7 @@ import CommonController from './controllers/common.js';
 import TitleUtils from './utils/title.js';
 import WikiTranslator from './utils/translator.js';
 import GeneralUtils from './utils/general.js';
+import LogManager from './managers/log';
 
 // ================ Initialization ================
 export async function activateWiki(MONGO_URI: string): Promise<boolean> {
@@ -34,11 +35,12 @@ export async function activateWiki(MONGO_URI: string): Promise<boolean> {
     if (!(await WikiManager.isInitialized())) {
         await mongoose.connection.transaction(async () => {
             await CommonController.initCommon();
+
             const systemUser = AuthorityManager.getSystemUser();
             const systemUserDoc = await UserManager.signupUserByEmailAndName(systemUser.email, systemUser.name);
             systemUserDoc.group = 'system';
             await systemUserDoc.save();
-            // await UserManager.changeGroupByEmail(systemUser.email, 'system', systemUser);
+
             await WikiManager.init();
         });
     }
@@ -67,15 +69,17 @@ export async function signupUserByEmailAndName(email: string, name: string): Pro
     });
 }
 
-export async function changeUserNameByName(userName: string, name: string, operator: User): Promise<User> {
+export async function changeUserNameByName(userName: string, name: string, operator: User): Promise<boolean> {
     return await mongoose.connection.transaction(async () => {
-        return await UserManager.changeNameByName(userName as UserName, name as UserName, operator);
+        await UserManager.changeNameByName(userName as UserName, name as UserName, operator);
+        return true;
     });
 }
 
-export async function changeUserGroupByName(userName: string, group: Group, operator: User): Promise<User> {
+export async function changeUserGroupByName(userName: string, group: Group, operator: User): Promise<boolean> {
     return await mongoose.connection.transaction(async () => {
-        return await UserManager.changeGroupByName(userName as UserName, group, operator);
+        await UserManager.changeGroupByName(userName as UserName, group, operator);
+        return true;
     });
 }
 
@@ -141,7 +145,7 @@ export async function moveDocByFullTitle(fullTitle: string, user: User, newFullT
     });
 }
 
-export async function updateAuthorityByFullTitle(fullTitle: string, user: User, action: DocAction, groupArr: Group[], comment=''): Promise<boolean> {
+export async function updateAuthorityByFullTitle(fullTitle: string, user: User, action: DocAction, groupArr: Group[], comment = ''): Promise<boolean> {
     comment = GeneralUtils.ignoreHtml(comment);
     return await mongoose.connection.transaction(async () => {
         await WikiManager.changeAuthorityByFullTitle(fullTitle, user, action, groupArr, comment);
@@ -149,10 +153,18 @@ export async function updateAuthorityByFullTitle(fullTitle: string, user: User, 
     });
 }
 
-export async function updateStateByFullTitle(fullTitle: string, user: User, isAllowed: boolean, comment=''): Promise<boolean> {
+export async function hideDocByFullTitle(fullTitle: string, user: User, comment = ''): Promise<boolean> {
     comment = GeneralUtils.ignoreHtml(comment);
     return await mongoose.connection.transaction(async () => {
-        await WikiManager.changeStateByFullTitle(fullTitle, user, isAllowed, comment);
+        await WikiManager.hideDocByFullTitle(fullTitle, user, comment);
+        return true;
+    });
+}
+
+export async function showDocByFullTitle(fullTitle: string, user: User, comment = ''): Promise<boolean> {
+    comment = GeneralUtils.ignoreHtml(comment);
+    return await mongoose.connection.transaction(async () => {
+        await WikiManager.showDocByFullTitle(fullTitle, user, comment);
         return true;
     });
 }
@@ -180,12 +192,12 @@ export async function previewDoc(doc: Doc): Promise<string> {
 
 
 // ================ History Module ================
-export async function getDocLogsByFullTitle(fullTitle: string, user: User, fromRev: number, toRev: number = -1): Promise<DocLogDoc[] | null> {
-    return await WikiManager.getDocLogsByFullTitle(fullTitle, user, fromRev, toRev);
+export async function getDocLogsByFullTitle(fullTitle: string, user: User, page: number, cnt=10): Promise<DocLogDoc[] | null> {
+    return await LogManager.getDocLogsByFullTitle(fullTitle, user, page, cnt);
 }
 
-export async function getDocLogsByUserName(userName: string, cnt=20): Promise<DocLogDoc[]> {
-    return await LogController.getDocLogsByUserName(userName as UserName, cnt);
+export async function getDocLogsByUserName(userName: string, page: number, cnt=10): Promise<DocLogDoc[]|null> {
+    return await LogManager.getDocLogsByUserName(userName as UserName, page, cnt);
 }
 
 
@@ -201,7 +213,7 @@ export function canDo(action: DocAction, docInfo: Info, userGroup: Group): boole
 }
 
 export async function getAllFullTitles(): Promise<string[]> {
-    return await CommonController.getAllFullTitles();
+    return (await CommonController.getCommon()).fullTitleArr;
 }
 
 export function encodeFullTitle(fullTitle: string): string {

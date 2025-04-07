@@ -16,6 +16,8 @@ import TitleUtils from '../utils/title.js';
 import InfoController from '../controllers/info.js';
 import CommonController from '../controllers/common.js';
 import LogController from '../controllers/log.js';
+import UserManager from './user';
+import UserController from '../controllers/user';
 
 export default class WikiManager {
 
@@ -42,7 +44,7 @@ export default class WikiManager {
     }
 
     static async createHTMLByDoc(doc: Doc): Promise<string> {
-        if (doc.type === 'general' || doc.type === 'special') {
+        if (doc.type === 'general' || doc.type === 'wiki' || doc.type === 'file') {
             return WikiTranslator.translate(doc.markup, doc.fullTitle);
         } else if (doc.type === 'category') {
             const categoryMarkup =
@@ -51,7 +53,7 @@ export default class WikiManager {
                 );
             return WikiTranslator.translate(doc.markup + categoryMarkup, doc.fullTitle);
         } else {
-            throw new Error('Undexpected DocType');
+            throw new Error('Undexpected DocType or hidden doc');
         }
     }
 
@@ -70,7 +72,7 @@ export default class WikiManager {
     static async writeDocByFullTitle(fullTitle: string, user: User, markup: string, comment?: string): Promise<void> {
         const prevDoc = await DocManager.getDocByFullTitle(fullTitle, -1);
 
-        if (!prevDoc ||prevDoc?.state === 'deleted') {
+        if (!prevDoc || prevDoc?.state === 'deleted') {
             await this.#createDocByFullTitle(fullTitle, user, markup, comment);
         } else if (prevDoc) {
             await this.#editDocByFullTitle(fullTitle, user, markup, comment);
@@ -111,12 +113,7 @@ export default class WikiManager {
         if (!AuthorityManager.canDo('edit', prevDoc, user.group))
             throw new Error('Cannot Write');
 
-        const nextDoc = { ...prevDoc };
-        nextDoc.markup = CategoryManager.checkCategory(markup, fullTitle);
-        nextDoc.revision += 1;
-
-        await CategoryManager.categorizeDoc(nextDoc.docId, prevDoc.markup, nextDoc.markup);
-        await DocManager.editDocByDoc(prevDoc, nextDoc, user, comment);
+        await DocManager.editDocByDoc(prevDoc, markup, user, comment);
     }
 
     static async deleteDocByFullTitle(fullTitle: string, user: User, comment?: string): Promise<void> {
@@ -172,59 +169,39 @@ export default class WikiManager {
         await DocManager.changeAuthorityByDoc(prevDoc, action, groupArr, user, comment);
     }
 
-    static async changeStateByFullTitle(fullTitle: string, user: User, isAllowed: boolean, comment?: string): Promise<void> {
-
+    static async hideDocByFullTitle(fullTitle: string, user: User, comment?: string): Promise<void> {
         const prevDoc = await DocManager.getDocByFullTitle(fullTitle);
 
         if (prevDoc === null)
             throw new Error('The document does not exist yet');
 
         if (!AuthorityManager.canDo('change_state', prevDoc, user.group))
-            throw new Error('Cannot change state');
+            throw new Error('Cannot hide doc');
 
-        if (!isAllowed) {
-            await DocManager.changeStateByDoc(prevDoc, 'forbidden', user, comment);
-        } else {
-            const prevState = (await LogController.getDocLogsByDocId(prevDoc.docId, prevDoc.revision, prevDoc.revision, 1))[0].systemLog.split('→')[0] as DocState;
-            await DocManager.changeStateByDoc(prevDoc, prevState, user, comment);
-        }
+        if (prevDoc.state === 'hidden')
+            throw new Error('The doc is already hidden');
+
+        if (prevDoc.state === 'normal')
+            throw new Error('The doc must be deleted before hiding');
+
+        await DocManager.hideDocByDoc(prevDoc, user, comment);
     }
 
-    static async getDocLogsByFullTitle(
-        fullTitle: string,
-        user: User,
-        fromRev: number,
-        toRev = -1
-    ): Promise<DocLogDoc[] | null> {
-        const doc = await DocManager.getDocByFullTitle(fullTitle, -1);
-        if (doc === null)
-            return null;
+    static async showDocByFullTitle(fullTitle: string, user: User, comment?: string): Promise<void> {
+        const prevDoc = await DocManager.getDocByFullTitle(fullTitle);
 
-        if (!AuthorityManager.canDo('read', doc, user.group))
-            throw new Error('Cannot read doc-logs');
+        if (prevDoc === null)
+            throw new Error('The document does not exist yet');
 
-        if (toRev < 0) {
-            toRev = doc.revision + toRev + 1;
-        }
-        if (toRev <= 0) {
-            toRev = 1;
-        }
-        if (fromRev < 0) {
-            fromRev = toRev + fromRev + 1;
-        }
-        if (fromRev <= 0) {
-            fromRev = 1;
-        }
+        if (!AuthorityManager.canDo('change_state', prevDoc, user.group))
+            throw new Error('Cannot show doc');
 
-        if (fromRev > toRev)
-            throw new Error('The range of revision was wrong');
+        if (prevDoc.state !== 'hidden')
+            throw new Error('The doc is not hidden');
 
-        return await LogController.getDocLogsByDocId(
-            doc.docId,
-            fromRev,
-            toRev
-        );
+        await DocManager.showDocByDoc(prevDoc, user, comment);
     }
+
 
     static async compareDocByFullTitle(fullTitle: string, user: User, oldRev: number, newRev: number): Promise<{ diff: Change[], oldDoc: Doc | null, newDoc: Doc | null }> {
         const oldDoc = await this.readDocByFullTitle(fullTitle, user, oldRev);
@@ -237,7 +214,7 @@ export default class WikiManager {
     }
 
     static async searchDoc(searchWord: string): Promise<{ status: 'exact' | 'searched', result: Array<string | SearchResult> }> {
-        const fullTitleArr = await CommonController.getAllFullTitles();
+        const fullTitleArr = (await CommonController.getCommon()).fullTitleArr;
         const hangulSearcher = new HangulSearcher(fullTitleArr);
         const searchResultArr = hangulSearcher.search(searchWord);
         if (searchResultArr.length !== 0 && searchResultArr[0] === searchWord) {

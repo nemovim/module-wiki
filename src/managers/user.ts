@@ -4,6 +4,8 @@ import type { User, UserDoc, UserEmail, UserName } from '../types/user';
 import UserController from '../controllers/user.js';
 import LogController from '../controllers/log.js';
 import AuthorityManager from './authority.js';
+import LogManager from './log';
+import CommonController from '../controllers/common';
 
 export default class UserManager {
 
@@ -29,11 +31,13 @@ export default class UserManager {
             user = await UserController.getUserByName(name);
         }
 
-        await LogController.setUserLogByEmailAndAction(email, 'signup', `name: ${name}`);
+        await LogManager.setUserLogByEmailAndAction(email, 'signup', `name: ${name}`);
+        await CommonController.addUserCnt(1);
         return await UserController.setUserByEmailAndName(email, name);
     }
 
-    static async changeNameByName(userName: UserName, newName: UserName, operator: User): Promise<User> {
+    static async changeNameByName(userName: UserName, newName: UserName, operator: User): Promise<void> {
+
         const user = await UserController.getUserByName(userName);
         if (!user)
             throw new Error('The user does not exist!');
@@ -49,36 +53,34 @@ export default class UserManager {
         if (changeNameLog && new Date(changeNameLog.time).getTime() < new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
             throw new Error('You can change your name only once every 30 days.');
 
-        const changedUser = await UserController.updateNameByUser(user, newName);
+        await UserController.updateNameByUserName(prevName, newName);
         await LogController.updateNamesOfAllDocLogsByEmail(user.email, newName);
-        await LogController.setUserLogByEmailAndAction(user.email, 'change_name', `${prevName}→${newName} by ${operator.email}`);
-        return changedUser;
+        await LogManager.setUserLogByEmailAndAction(user.email, 'change_name', `${prevName}→${newName} by ${operator.email}`);
     }
 
-    static async #changeGroupByUser(user: UserDoc | null, group: Group, operator: User) {
+    static async #changeGroupByUser(user: UserDoc | null, group: Group, operator: User): Promise<void> {
         if (!user)
             throw new Error('The user does not exist!');
 
         if (!AuthorityManager.canChangeGroup(user, operator))
             throw new Error('Cannot change group!');
 
-        await LogController.setUserLogByEmailAndAction(user.email, 'change_group', `${user.group}→${group} by ${operator.email}`);
-        return await UserController.updateGroupByUser(user, group);
-
+        await LogManager.setUserLogByEmailAndAction(user.email, 'change_group', `${user.group}→${group} by ${operator.email}`);
+        await UserController.updateGroupByUserName(user.name, group);
     }
 
-    static async changeGroupByName(userName: UserName, group: Group, operator: User): Promise<User> {
+    static async changeGroupByName(userName: UserName, group: Group, operator: User): Promise<void> {
         if (!['user', 'manager'].includes(group))
             throw new Error("The group of user can only be 'user' or 'manager'!")
         const user = await UserController.getUserByName(userName);
-        return this.#changeGroupByUser(user, group, operator);
+        await this.#changeGroupByUser(user, group, operator);
     }
 
-    static async changeGroupByEmail(userEmail: UserEmail, group: Group, operator: User): Promise<User> {
+    static async changeGroupByEmail(userEmail: UserEmail, group: Group, operator: User): Promise<void> {
         if (!['user', 'blocked'].includes(group))
             throw new Error("This function is made for blocking and unblocking user!")
         const user = await UserController.getUserByEmail(userEmail);
-        return this.#changeGroupByUser(user, group, operator);
+        await this.#changeGroupByUser(user, group, operator);
     }
 
     static async removeUserByEmail(email: UserEmail): Promise<void> {
@@ -87,7 +89,7 @@ export default class UserManager {
             throw new Error('The user does not exist!');
 
         await LogController.updateNamesOfAllDocLogsByEmail(email, '(삭제된 사용자)' as UserName);
-        await UserController.deleteUserByUser(user);
+        await UserController.deleteUserByUserEmail(email);
     }
 
 }

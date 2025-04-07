@@ -41,7 +41,9 @@
 
 <DocHeader {fullTitle} {doc} pageType={'authority'} />
 {#if !doc}
-    <p>존재하지 않는 문서입니다.</p>
+    <p>권한이 존재하지 않습니다.</p>
+{:else if doc.state === 'hidden'}
+    <p>숨겨진 문서입니다.</p>
 {:else}
     {#each docActionArr as docAction, i}
         <div class="action-div">

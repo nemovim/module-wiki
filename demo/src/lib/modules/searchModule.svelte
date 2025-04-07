@@ -37,7 +37,7 @@
 
     function onBlurSearchDiv(e: FocusEvent): void {
         if (e.target !== null && e.relatedTarget instanceof HTMLElement) {
-            if (e.relatedTarget.classList.contains('suggestionBtn')) {
+            if (e.relatedTarget.classList.contains('suggestion-btn')) {
                 e.relatedTarget.click();
             } else {
                 suggestionArr = [];

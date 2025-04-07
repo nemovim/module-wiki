@@ -8,7 +8,7 @@ export default class WikiTranslator {
 
     static initTranslator(): void {
         this.categoryReg = Translator.createRegExp(/\[#\[/, /(.+?)/, /]](?:\n)?/);
-        this.externalAnchorReg = Translator.createRegExp(/\[(https?)\[/, /(.+?)/, /\]\]/);
+        this.externalAnchorReg = Translator.createRegExp(/\[(https)\[/, /(.+?)/, /\]\]/);
         Translator.parseAnchorAttributes = (link: string, name?: string) => {
             if (!name) name = link;
             let title = link;
@@ -96,21 +96,6 @@ export default class WikiTranslator {
                 `<hr />${content}`
             );
         }
-    }
-
-
-    static toNormal(content: string): string {
-        // const categoryReg = /\\(\[#\[(.+)]])/g;
-        // content = content.replaceAll(categoryReg, '$1');
-        return content;
-    }
-
-    static toIgnore(content: string): string {
-        // const specialAnchorReg = /(\[@\[|\]\])/g;
-        // const categoryReg = /(\[#\[|\]\])/g;
-        // content = content.replaceAll(categoryReg, '\\$1');
-        // content = content.replaceAll(specialAnchorReg, '\\$1');
-        return content;
     }
 
     static toEscape(content: string): string {

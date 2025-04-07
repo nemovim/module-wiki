@@ -1,40 +1,52 @@
 <script lang="ts">
+    import { page } from '$app/state';
     import DocHeader from '$lib/modules/docHeader.svelte';
     import LogList from '$lib/modules/logList.svelte';
     import postReq from '$lib/utils/postReq.js';
-    import type {DocLogDoc, Hist} from 'module-wiki';
+    import { encodeFullTitle, type DocLogDoc } from 'module-wiki';
+
+    let pageIdx = $state<number>(
+        Number(page.url.searchParams.get('page')) || 1
+    );
+    let updatedLogArr = $state<DocLogDoc[]>();
 
     let { data } = $props();
 
     let fullTitle = $derived<string>(data.fullTitle as string);
-    let logArr = $derived<DocLogDoc[]>(JSON.parse(data.logArr || '[]'));
+    let logArr = $derived<DocLogDoc[]>(updatedLogArr || JSON.parse(data.logArr || '[]'));
 
-    // async function loadMoreHistories(): Promise<void> {
-    //     if (logArr == null) return;
-    //     const rev = logArr[logArr.length - 1].revision;
-    //     const res = await postReq('/api/history', {
-    //         fullTitle,
-    //         fromRev: -11,
-    //         toRev: rev - 1,
-    //     });
+    async function loadMoreLogs(loadType: 'prev' | 'next') {
+        if (loadType === 'prev') {
+            pageIdx -= 1;
+        } else if (loadType === 'next') {
+            pageIdx += 1;
+        }
 
-    //     if (res.success) {
-    //         const newHistArr = res.result;
-    //         newHistArr.reverse();
-    //         logArr = [...logArr, ...newHistArr];
-    //     } else {
-    //         alert(res.result.fullTitle + ': ' + res.result.message);
-    //     }
-    // }
+        window.history.pushState({}, '', `/h/${encodeFullTitle(fullTitle)}?page=${pageIdx}`);
 
+        const res = await postReq('/api/log/doc', {
+            fullTitle,
+            pageIdx,
+        });
+
+        if (res.success) {
+            updatedLogArr = res.result;
+        } else {
+            alert(res.result.fullTitle + ': ' + res.result.message);
+        }
+    }
 </script>
 
 <DocHeader {fullTitle} doc={null} pageType={'hist'} />
 {#if logArr.length === 0}
-    <p>존재하지 않는 문서입니다.</p>
+    <p>역사가 존재하지 않습니다.</p>
 {:else}
     <LogList {fullTitle} {logArr} pageType={'hist'} />
-    <!-- {#if logArr[logArr.length - 1].revision !== 1}
-        <button onclick={loadMoreHistories}>이전 역사</button>
-    {/if} -->
+        <button disabled={pageIdx === 1} onclick={() => loadMoreLogs('prev')}
+            >이전</button
+        >
+        <button
+            disabled={logArr.at(-1)?.revision === 1 && logArr.at(-1)?.action === 'create'}
+            onclick={() => loadMoreLogs('next')}>다음</button
+        >
 {/if}

@@ -7,7 +7,7 @@ const schema = new mongoose.Schema<User>(
         email: { type: String, required: true, unique: true},
         name: { type: String, required: true, unique: true},
         group: { type: String, required: true },
-
+        contribCnt: { type: Number, required: true },
     },
     {
         timestamps: true,

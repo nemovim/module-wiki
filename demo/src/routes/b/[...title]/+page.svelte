@@ -14,7 +14,9 @@
 <DocHeader {fullTitle} doc={null} pageType={'backlink'} />
 
 <article id="mainArticle" class="kmu">
-    {#if !html}
+    {#if fullTitle.split(':')[0] === '숨김'}
+        <p>숨겨진 문서입니다.</p>
+    {:else if !html}
         <p>역링크가 존재하지 않습니다.</p>
     {:else}
         {@html html}

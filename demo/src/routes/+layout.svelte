@@ -26,7 +26,8 @@
 
 <header>
     <a href="/" style:font-weight={'bold'}>
-        <span style:color={"rgb(50, 150, 255)"}>MODULE</span><span>-WIKI</span>
+        <!-- <span style:color={"rgb(50, 150, 255)"}>MODULE</span><span>-WIKI</span> -->
+        <span>WIKI</span>
     </a>
     <SearchModule />
 </header>

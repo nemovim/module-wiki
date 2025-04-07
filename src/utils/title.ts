@@ -15,9 +15,9 @@ export default class TitleUtils {
         return decodeURIComponent(fullTitle).trim();
     }
 
-    static prefixArr = ['분류', '위키'];
+    static prefixArr = ['일반', '분류', '위키', '파일', '숨김'];
     static getPrefixAndTitleByFullTitle(fullTitle: string): [string, string] {
-        let prefix = '';
+        let prefix = '일반';
         let title = fullTitle;
 
         const temp = fullTitle.split(':');
@@ -31,12 +31,16 @@ export default class TitleUtils {
 
     static getDocTypeByFullTitle(fullTitle: string): DocType {
         const [prefix, title] = this.getPrefixAndTitleByFullTitle(fullTitle);
-        if (prefix === '') {
-            return 'general';
-        } else if (prefix === '분류') {
+        if (prefix === '분류') {
             return 'category';
+        } else if (prefix === '위키') {
+            return 'wiki';
+        } else if (prefix === '파일') {
+            return 'file';
+        } else if (prefix === '숨김') {
+            return 'hidden';
         } else {
-            return 'special';
+            return 'general';
         }
     }
 

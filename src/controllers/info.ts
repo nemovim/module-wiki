@@ -48,9 +48,6 @@ export default class InfoController {
         });
     }
 
-    static async getAllInfos(): Promise<Array<InfoDoc>> {
-        return await InfoModel.find({});
-    }
 
     static async setInfoByDoc(doc: Partial<Doc> & Info): Promise<InfoDoc> {
         const info = new InfoModel<Info>(doc);
@@ -58,16 +55,18 @@ export default class InfoController {
     }
 
     static async updateInfoByDoc(doc: Partial<Doc> & Info): Promise<InfoDoc> {
-        const info = await this.getInfoByDocId(doc.docId);
-        if (!info) {
-            return await this.setInfoByDoc(doc);
-        } else {
-            info.fullTitle = doc.fullTitle;
-            info.authority = doc.authority;
-            info.state = doc.state;
-            info.categorizedArr = doc.categorizedArr;
-            info.revision = doc.revision;
-            return await info.save();
-        }
+        return await InfoModel.findOneAndUpdate({ docId: doc.docId }, doc, {new: true, upsert: true })
+        // const info = await this.getInfoByDocId(doc.docId);
+        // if (!info) {
+        //     return await this.setInfoByDoc(doc);
+        // } else {
+        //     info.fullTitle = doc.fullTitle;
+        //     info.authority = doc.authority;
+        //     info.state = doc.state;
+        //     info.categorizedArr = doc.categorizedArr;
+        //     info.revision = doc.revision;
+        //     return await info.save();
+
+        // }
     }
 }

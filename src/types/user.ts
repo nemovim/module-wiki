@@ -9,6 +9,7 @@ export interface User {
     email: UserEmail,
     name: UserName,
     group: Group,
+    contribCnt: number,
 }
 
 export type UserDoc = HydratedDocument<User>;

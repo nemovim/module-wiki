@@ -93,7 +93,7 @@ __밑줄__
         <button onclick={goToWritePage}>편집</button>
         <button onclick={goToHistoryPage}>역사</button>
         <button onclick={goToBacklinkPage}>역링크</button>
-        {#if doc}
+        {#if doc && ['dev', 'manager'].includes(JSON.parse(page.data.user).group)}
             <RestateBtn {fullTitle} state={doc.state}/>
         {/if}
     {:else if pageType === 'backlink'}

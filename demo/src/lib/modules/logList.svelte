@@ -22,7 +22,6 @@
             return `<span>${delta}</span>`;
         }
     }
-
 </script>
 
 {#each logArr as log, i}
@@ -49,14 +48,13 @@
         {#if pageType === 'hist'}
             <a href="/u/{encodeFullTitle(log.userName)}">{log.userName}</a>
         {/if}
-        <span>
-            {parseTime(log.time)}</span>
+        <span> {parseTime(log.time)}</span>
     </div>
     <div class="comment-div">
         {#if log.comment !== '' && log.systemLog !== ''}
-            <p>↳(<b>{log.systemLog}</b> | {log.comment})</p>
+            <p>↳(<b>{log.systemLog}</b> | {@html log.comment})</p>
         {:else if log.comment !== '' && log.systemLog === ''}
-            <p>↳({log.comment})</p>
+            <p>↳({@html log.comment})</p>
         {:else if log.comment === '' && log.systemLog !== ''}
             <p>↳(<b>{log.systemLog}</b>)</p>
         {/if}

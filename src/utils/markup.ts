@@ -71,6 +71,9 @@ export default class MarkupUtils {
 
             const titleArr = prefixMap.get(prefix) || [];
 
+            if (prefix === '일반')
+                prefix = '';
+
             if (titleArr.length === 0) return;
 
             const choseongMap = MarkupUtils.createChoseongMapByTitleArr(titleArr);

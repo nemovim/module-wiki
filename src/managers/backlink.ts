@@ -9,7 +9,7 @@ import WikiTranslator from '../utils/translator.js';
 export default class BacklinkManager {
     static async createBacklinkMarkupByFullTitle(fullTitle: string): Promise<string|null> {
         const backlink = await BacklinkController.getBacklinkByFullTitle(fullTitle);
-        if (BacklinkController.isEmptyBacklink(backlink))
+        if (!backlink)
             return null;
         return MarkupUtils.createAlignedMarkupByFullTitleArr(backlink.linkedArr, '연결된');
     }

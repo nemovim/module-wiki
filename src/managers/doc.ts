@@ -14,6 +14,8 @@ import BacklinkManager from './backlink.js';
 
 import TitleUtils from '../utils/title.js';
 import GeneralUtils from '../utils/general.js';
+import LogManager from './log';
+import CategoryManager from './category';
 
 
 export default class DocManager {
@@ -41,6 +43,8 @@ export default class DocManager {
                 return null;
             } else {
                 const doc = this.createDocByInfoAndHist(info, hist);
+                if (doc.state === 'hidden')
+                    doc.markup = '';
                 return doc;
             }
         }
@@ -50,10 +54,10 @@ export default class DocManager {
         const docType = TitleUtils.getDocTypeByFullTitle(fullTitle);
         if (docType === 'general') {
             return this.#createNewGeneralDocByFullTitle(fullTitle);
+        } else if (docType === 'wiki') {
+            return this.#createNewWikiDocByFullTitle(fullTitle);
         } else if (docType === 'category') {
             return this.#createNewCategoryDocByFullTitle(fullTitle);
-        } else if (docType === 'special') {
-            return this.#createNewSpecialDocByFullTitle(fullTitle);
         } else {
             throw new Error('Unexpected DocType!')
         }
@@ -81,11 +85,11 @@ export default class DocManager {
         };
     }
 
-    static #createNewSpecialDocByFullTitle(fullTitle: string): Doc {
+    static #createNewWikiDocByFullTitle(fullTitle: string): Doc {
         const docId = GeneralUtils.createNewId() as DocId;
         return {
             docId,
-            type: 'special',
+            type: 'wiki',
             fullTitle,
             authority: {
                 read: ['any'],
@@ -116,7 +120,7 @@ export default class DocManager {
                 move: ['none'],
                 delete: ['none'],
                 change_authority: ['manager', 'dev'],
-                change_state: ['manager', 'dev'],
+                change_state: ['none'],
             },
             state: 'new',
             categorizedArr: [],
@@ -134,12 +138,18 @@ export default class DocManager {
     static async createDocByDoc(prevDoc: Doc | null, nextDoc: Doc, user: User, comment?: string): Promise<void> {
         nextDoc.state = 'normal';
         await CommonController.addFullTitle(nextDoc.fullTitle);
-        await LogController.setDocLogByAction('create', prevDoc, nextDoc, user, comment);
+        await CommonController.addDocCnt(1);
+        await LogManager.setDocLogByAction('create', prevDoc, nextDoc, user, comment);
         await this.saveDocByDoc(prevDoc, nextDoc);
     }
 
-    static async editDocByDoc(prevDoc: Doc, nextDoc: Doc, user: User, comment?: string): Promise<void> {
-        await LogController.setDocLogByAction('edit', prevDoc, nextDoc, user, comment);
+    static async editDocByDoc(prevDoc: Doc, markup: string, user: User, comment?: string): Promise<void> {
+        const nextDoc = { ...prevDoc };
+        nextDoc.markup = CategoryManager.checkCategory(markup, prevDoc.fullTitle);
+        nextDoc.revision += 1;
+
+        await CategoryManager.categorizeDoc(nextDoc.docId, prevDoc.markup, nextDoc.markup);
+        await LogManager.setDocLogByAction('edit', prevDoc, nextDoc, user, comment);
         await this.saveDocByDoc(prevDoc, nextDoc);
     }
 
@@ -151,15 +161,17 @@ export default class DocManager {
         nextDoc.revision += 1;
 
         await CommonController.removeFullTitle(nextDoc.fullTitle);
-        await LogController.setDocLogByAction('delete', prevDoc, nextDoc, user, comment);
+        await CommonController.addDocCnt(-1);
+        await LogManager.setDocLogByAction('delete', prevDoc, nextDoc, user, comment);
         await this.saveDocByDoc(prevDoc, nextDoc);
     }
 
     static async moveDocByDoc(prevDoc: Doc, newFullTitle: string, user: User, comment?: string): Promise<void> {
         const nextDoc = { ...prevDoc }
         nextDoc.fullTitle = newFullTitle;
+
         await CommonController.updateFullTitle(prevDoc.fullTitle, nextDoc.fullTitle);
-        await LogController.setDocLogByAction('move', prevDoc, nextDoc, user, comment);
+        await LogManager.setDocLogByAction('move', prevDoc, nextDoc, user, comment);
         await LogController.updateFullTitlesOfAllDocLogsByDocId(nextDoc.docId, nextDoc.fullTitle);
         await InfoController.updateInfoByDoc(nextDoc);
     }
@@ -167,14 +179,28 @@ export default class DocManager {
     static async changeAuthorityByDoc(prevDoc: Doc, action: DocAction, groupArr: Group[], user: User, comment?: string): Promise<void> {
         const nextDoc = { ...prevDoc }
         nextDoc.authority[action] = groupArr;
-        await LogController.setDocLogByAction('change_authority', prevDoc, nextDoc, user, comment);
+
+        await LogManager.setDocLogByAction('change_authority', prevDoc, nextDoc, user, comment);
         await InfoController.updateInfoByDoc(nextDoc);
     }
 
-    static async changeStateByDoc(prevDoc: Doc, newState: DocState, user: User, comment?: string): Promise<void> {
+    static async hideDocByDoc(prevDoc: Doc, user: User, comment?: string): Promise<void> {
         const nextDoc = { ...prevDoc }
-        nextDoc.state = newState;
-        await LogController.setDocLogByAction('change_state', prevDoc, nextDoc, user, comment);
+        nextDoc.state = 'hidden';
+        nextDoc.fullTitle = '숨김:' + nextDoc.fullTitle;
+
+        await LogController.updateFullTitlesOfAllDocLogsByDocId(nextDoc.docId, nextDoc.fullTitle);
+        await LogManager.setDocLogByAction('change_state', prevDoc, nextDoc, user, comment);
+        await InfoController.updateInfoByDoc(nextDoc);
+    }
+
+    static async showDocByDoc(prevDoc: Doc, user: User, comment?: string): Promise<void> {
+        const nextDoc = { ...prevDoc }
+        nextDoc.state = 'deleted';
+        nextDoc.fullTitle = TitleUtils.getPrefixAndTitleByFullTitle(nextDoc.fullTitle)[1];
+
+        await LogController.updateFullTitlesOfAllDocLogsByDocId(nextDoc.docId, nextDoc.fullTitle);
+        await LogManager.setDocLogByAction('change_state', prevDoc, nextDoc, user, comment);
         await InfoController.updateInfoByDoc(nextDoc);
     }
 

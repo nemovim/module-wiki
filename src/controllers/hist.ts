@@ -16,7 +16,7 @@ export default class HistController {
                         revision: -1,
                     })
                     .limit(1)
-            )[0];
+            )[0] || null;
         } else {
             return await HistModel.findOne({
                 docId,
@@ -24,15 +24,6 @@ export default class HistController {
             });
         }
     }
-
-    // static async getHistsByDocId(docId: DocId, fromRev: number, toRev: number): Promise<Array<HistDoc>> {
-    //     return await HistModel.find({
-    //         docId,
-    //         revision: {
-    //             $gte: fromRev, $lte: toRev
-    //         },
-    //     });
-    // }
 
     static async setHistByDoc(doc: Doc): Promise<HistDoc> {
         const hist = new HistModel<Hist>({

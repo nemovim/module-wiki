@@ -15,6 +15,7 @@ export default class AuthorityManager {
             email: '<SYSTEM>@<SYSTEM>' as UserEmail,
             name: '<SYSTEM>' as UserName,
             group: 'system',
+            contribCnt: 0,
         }
     }
 
@@ -38,10 +39,10 @@ export default class AuthorityManager {
         if ((docInfo.authority[action] || []).includes('none'))
             return false;
 
-        if (docInfo.state === 'forbidden') {
-            if (!['dev', 'manager'].includes(userGroup) || ['create', 'edit'].includes(action))
-                throw new Error('This document is forbidden!')
-            else return true;
+        if (docInfo.state === 'hidden') {
+            if (['dev', 'manager'].includes(userGroup) && !['create', 'edit'].includes(action))
+                return true;
+            else throw new Error('This document is hidden!')
         }
         if (action === 'change_authority' && (docInfo.authority[action] || []).includes('none'))
             return false;
