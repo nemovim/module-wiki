@@ -8,7 +8,6 @@ export default function postReq(url: string, data: any): Promise<{success: boole
             body: JSON.stringify(data),
         })
             .then(async (res) => {
-                console.log(res)
                 if (res.status >= 400 && res.status < 600) {
                     resolve({
                         success: false,

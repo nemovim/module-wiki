@@ -1,39 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap'); 
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
 // @font-face {
 // 	font-family: 'NanumGothic';
-// 	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+//     src: url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
+// 	unicode-range: U+AC00-D7A3, U+0021-007E;
 // }
 
 @font-face {
-    font-family: 'NanumSquareNeo';
-	font-weight: 100;
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot);
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.ttf) format("truetype");
-	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
-}
-
-@font-face {
-    font-family: 'NanumSquareNeo';
-	font-weight: normal;
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot);
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf) format("truetype");
-	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
-}
-
-@font-face {
-    font-family: 'NanumSquareNeo';
-	font-weight: bold;
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot);
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.ttf) format("truetype");
-	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
-}
-
-@font-face {
-    font-family: 'NanumSquareNeo';
-	font-weight: 900;
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf) format("truetype");
-	unicode-range: U+AC00-D7A3, U+0041-007A, U+0030-0039, U+0021-007E;
+    font-family: 'Arial';
+    src: local('Arial');
+    unicode-range: U+005C;
 }
 
 :root {
@@ -47,8 +22,7 @@
 }
 
 * {
-    // font-family: 'NanumSquareNeo';
-	font-family: 'NanumGothic';
+	font-family: 'Arial', 'NanumGothic';
     padding: 0;
     margin: 0;
     line-height: 1.5;

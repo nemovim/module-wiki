@@ -49,8 +49,6 @@ export default class UserManager {
 
         const changeNameLog = await LogController.getMostRecentChangeNameLogByEmail(user.email);
 
-        console.log(changeNameLog);
-
         if (changeNameLog && new Date(changeNameLog.time).getTime() < new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
             throw new Error('You can change your name only once every 30 days.');
 

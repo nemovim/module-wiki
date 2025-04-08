@@ -22,7 +22,6 @@ export default class WikiTranslator {
             const splittedHref = captured.split('<#>');
             if (splittedHref.length >= 2) {
                 const hash = splittedHref.splice(splittedHref.length - 1, 1)[0];
-                console.log(splittedHref)
                 return "/r/" + TitleUtils.encodeFullTitle(splittedHref.join('#')) + '#' + TitleUtils.encodeFullTitle(hash);
             } else {
                 return "/r/" + TitleUtils.encodeFullTitle(GeneralUtils.normalizeHtml(captured));
