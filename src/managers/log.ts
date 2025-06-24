@@ -3,9 +3,9 @@ import type { DocAction, UserAction, DocLogDoc, DocLog, UserLogDoc, PenaltyLog, 
 import type { Penalty } from '../types/penalty';
 import type { User, UserEmail, UserName } from '../types/user';
 
-import CommonController from '../controllers/common.js';
-import LogController from '../controllers/log.js';
 import UserController from '../controllers/user.js';
+import MetaController from '../controllers/meta.js';
+import LogController from '../controllers/log.js';
 
 import DocManager from './doc.js';
 import AuthorityManager from './authority.js';
@@ -58,7 +58,7 @@ export default class LogManager {
 
         const systemLog = this.#makeSystemLogByDocAction(action, prevDoc, nextDoc);
 
-        await CommonController.addContribCnt(1);
+        await MetaController.addContribCnt(1);
 
         const docLog: DocLog = {
             docId: nextDoc.docId,

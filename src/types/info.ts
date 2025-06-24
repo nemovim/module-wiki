@@ -9,7 +9,15 @@ export interface Info {
     state: DocState,
     authority: Authority,
     revision: number,
-    categorizedArr: DocId[],
+    categorizedArr?: DocId[],
+    fileKey?: string,
+}
+
+export type CategoryInfo = Info & {
+    categorizedArr: DocId[];
+}
+export type FileInfo = Info & {
+    fileKey: string;
 }
 
 export type InfoDoc = HydratedDocument<Info>;

@@ -46,6 +46,10 @@ const schema_penalty = new mongoose.Schema<PenaltyLog>(
     }
 );
 
+schema_doc.index({ createdAt: -1 });
+schema_user.index({ createdAt: -1 });
+schema_penalty.index({ createdAt: -1 });
+
 export const DocLogModel =  mongoose.model('Doc-Log', schema_doc);
 export const UserLogModel =  mongoose.model('User-Log', schema_user);
 export const PenaltyLogModel =  mongoose.model('Penalty-Log', schema_penalty);

@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import type { Common } from '../types/common';
+import type { WikiMeta } from '../types/meta';
 
-const schema = new mongoose.Schema<Common>(
+const schema = new mongoose.Schema<WikiMeta>(
     {
-        fullTitleArr: { type: [String], default: []},
+        _id: {type: String, default: 'global'},
         userCnt: { type: Number, default: 0},
         docCnt: { type: Number, default: 0},
         contribCnt: { type: Number, default: 0},
@@ -13,4 +13,4 @@ const schema = new mongoose.Schema<Common>(
     }
 );
 
-export default mongoose.model('Common', schema);
+export default mongoose.model('WikiMeta', schema);

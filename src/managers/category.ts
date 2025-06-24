@@ -1,4 +1,4 @@
-import type { Info } from '../types/info';
+import type { CategoryInfo, Info } from '../types/info';
 import type { DocId } from '../types/doc';
 
 import InfoController from '../controllers/info.js';
@@ -126,6 +126,10 @@ export default class CategoryManager {
                         newDoc.revision = prevDoc.revision + 1;
                     }
 
+                    if (!newDoc.categorizedArr)
+                        throw new Error('The newDoc must be a category doc!');
+
+
                     newDoc.categorizedArr.push(docId);
                     newDoc.markup = '[#[미분류]]';
 
@@ -136,6 +140,8 @@ export default class CategoryManager {
 
                 } else {
                     // existing category
+                    if (!categoryInfo.categorizedArr)
+                        throw new Error('The categoryInfo must be a category info!');
                     categoryInfo.categorizedArr.push(docId);
                     addPromiseArr.push(
                         InfoController.updateInfoByDoc(categoryInfo)
@@ -147,7 +153,7 @@ export default class CategoryManager {
                 // Add all new categories into the Uncategorized-category
                 const uncategorizedInfo = await InfoController.getInfoByFullTitle(
                     '분류:미분류'
-                );
+                ) as CategoryInfo;
                 if (uncategorizedInfo === null) throw new Error('Uncategorized category must exist!');
                 uncategorizedInfo.categorizedArr.push(...newCategoryIdArr);
                 addPromiseArr.push(
@@ -173,9 +179,9 @@ export default class CategoryManager {
 
             const removePromiseArr: Promise<any>[] = [];
             for (let [key, value] of removeInfoMap) {
-                const removeInfo = removeInfoMap.get(key) as Info;
+                const removeInfo = removeInfoMap.get(key);
                 removePromiseArr.push(
-                    InfoController.updateInfoByDoc(removeInfo)
+                    InfoController.updateInfoByDoc(removeInfo as Info)
                 );
             }
 
@@ -196,14 +202,14 @@ export default class CategoryManager {
         }
     }
 
-    // RemoveInfoMap: Map<DocId, Info> = CategoryInfo whose categorizedArr needs to be updated.
-    // DeleteInfoArr: Info[] = CategoryInfo which will be deleted.
+    // RemoveInfoMap: Map<DocId, CategoryInfo> = CategoryInfo whose categorizedArr needs to be updated.
+    // DeleteInfoArr: CategoryInfo[] = CategoryInfo which will be deleted.
     static async analyzeRemovingDocFromCategories(
         docId: DocId,
         categoryFullTitleArr: string[],
-        removeInfoMap = new Map<string, Info>(),
-        deleteInfoArr: Info[] = []
-    ): Promise<[Map<string, Info>, Info[]]> {
+        removeInfoMap = new Map<string, CategoryInfo>(),
+        deleteInfoArr: CategoryInfo[] = []
+    ): Promise<[Map<string, CategoryInfo>, CategoryInfo[]]> {
         for (let categoryFullTitle of categoryFullTitleArr) {
             [removeInfoMap, deleteInfoArr] =
                 await this.analyzeRemovingDocFromCategory(
@@ -219,19 +225,21 @@ export default class CategoryManager {
     static async analyzeRemovingDocFromCategory(
         docId: DocId,
         categoryFullTitle: string,
-        removeInfoMap: Map<string, Info>,
-        deleteInfoArr: Info[]
-    ): Promise<[Map<string, Info>, Info[]]> {
-        let categoryInfo: Info;
+        removeInfoMap: Map<string, CategoryInfo>,
+        deleteInfoArr: CategoryInfo[]
+    ): Promise<[Map<string, CategoryInfo>, CategoryInfo[]]> {
+        let categoryInfo: CategoryInfo;
         if (!removeInfoMap.has(categoryFullTitle)) {
             const tempInfo = await InfoController.getInfoByFullTitle(
                 categoryFullTitle
             );
             if (tempInfo === null) throw new Error('The category does not exist!');
-            categoryInfo = tempInfo;
+            if (!tempInfo.categorizedArr)
+                throw new Error('The tempInfo must be a category info!');
+            categoryInfo = tempInfo as CategoryInfo;
             removeInfoMap.set(categoryFullTitle, categoryInfo);
         } else {
-            categoryInfo = removeInfoMap.get(categoryFullTitle) as Info;
+            categoryInfo = removeInfoMap.get(categoryFullTitle) as CategoryInfo;
         }
 
         if (categoryInfo.categorizedArr.length === 1 && categoryInfo.fullTitle !== '분류:미분류' && categoryInfo.fullTitle !== '분류:분류') {

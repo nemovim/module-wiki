@@ -1,6 +1,7 @@
 <script lang="ts">
     import postReq from '$lib/utils/postReq';
     import { encodeFullTitle } from 'module-wiki';
+    import { goto } from '$app/navigation';
 
     let { fullTitle }: { fullTitle: string } = $props();
 
@@ -17,7 +18,7 @@
 
         if (res.success) {
             alert('정상적으로 처리되었습니다.');
-            window.location.href = '/u/' + encodeFullTitle(name);
+            goto('/u/' + encodeFullTitle(name));
         } else {
             alert(res.result.fullTitle + ': ' + res.result.message);
         }

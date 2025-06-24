@@ -27,7 +27,7 @@ export default class LogController {
             fullTitle: {
                 $not: /^숨김:.+/,
             }
-        }).sort({ 'createdAt': -1 }).limit(count);
+        }).sort({ createdAt: -1 }).limit(count);
     }
 
     static async getDocLogsByDocId(docId: DocId, limit: number, skip = 0): Promise<Array<DocLogDoc>> {

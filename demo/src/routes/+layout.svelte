@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
     import { injectAnalytics } from '@vercel/analytics/sveltekit';
     import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+    import { goto } from '$app/navigation';
 
     injectAnalytics();
     injectSpeedInsights();
@@ -22,6 +23,9 @@
         addPopupListener();
     });
 
+    function uploadBtnClick() {
+        goto('/f');
+    }
 </script>
 
 <header>
@@ -30,6 +34,7 @@
         <span>WIKI</span>
     </a>
     <SearchModule />
+    <button id="upload-btn" onclick={uploadBtnClick}>업로드</button>
 </header>
 
 <div id="mainDiv">

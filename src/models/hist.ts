@@ -12,4 +12,6 @@ const schema = new mongoose.Schema<Hist>(
     }
 );
 
+schema.index({ docId: 1, revision: -1 })
+
 export default mongoose.model('Hist', schema);

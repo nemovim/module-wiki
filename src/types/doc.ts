@@ -7,3 +7,6 @@ export type DocType = 'general' | 'category' | 'wiki' | 'file' | 'hidden';
 export type DocState = 'new' | 'normal' | 'deleted' | 'hidden';
 
 export type Doc = Hist & Info & { html?: string }
+
+export type CategoryDoc = Doc & { categorizedArr: DocId[] }
+export type FileDoc = Doc & { filePath: string }

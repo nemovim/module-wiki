@@ -2,6 +2,7 @@
     import { encodeFullTitle } from 'module-wiki';
     import type { Doc } from 'module-wiki';
     import postReq from '$lib/utils/postReq';
+    import { goto } from '$app/navigation';
 
     let { doc }: { doc: Doc | null } = $props();
 
@@ -12,9 +13,12 @@
         }
 
         const deleteComment =
-            prompt('삭제하는 이유를 간략하게 적어주세요.') || '';
+            prompt('삭제하는 이유를 간략하게 적어주세요.');
+        
+        if (deleteComment === null)
+            return;
 
-        if (!confirm('정말로 삭제하시겠습니까?')) {
+        if (!confirm('정말로 삭제하시겠습니까?\n(파일 문서의 경우, 파일도 함께 삭제됩니다.)')) {
             alert('삭제가 취소되었습니다.');
             return;
         }
@@ -23,9 +27,10 @@
             fullTitle: doc.fullTitle,
             comment: deleteComment,
         });
+
         if (res.success) {
             alert('삭제가 완료되었습니다.');
-            location.href = `/r/${encodeFullTitle(doc.fullTitle)}`;
+            goto(`/r/${encodeFullTitle(doc.fullTitle)}`);
         } else {
             alert(res.result.fullTitle + ': ' + res.result.message);
         }

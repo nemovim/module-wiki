@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import postReq from '$lib/utils/postReq';
     import { encodeFullTitle, type DocState } from 'module-wiki';
 
@@ -12,7 +13,7 @@
         const res = await postReq('/api/show', { fullTitle, comment });
         if (res.success) {
             alert('정상적으로 처리되었습니다.');
-            window.location.href = '/a/' + encodeFullTitle(fullTitle);
+            goto('/a/' + encodeFullTitle(fullTitle));
         } else {
             alert(res.result.fullTitle + ': ' + res.result.message);
         }
@@ -26,7 +27,7 @@
         const res = await postReq('/api/hide', { fullTitle, comment });
         if (res.success) {
             alert('정상적으로 처리되었습니다.');
-            window.location.href = '/a/' + encodeFullTitle(fullTitle);
+            goto('/a/' + encodeFullTitle(fullTitle));
         } else {
             alert(res.result.fullTitle + ': ' + res.result.message);
         }

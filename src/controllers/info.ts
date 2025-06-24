@@ -28,6 +28,7 @@ export default class InfoController {
         infoArr.forEach(info => {
             infoMap.set(info.docId, info);
         });
+
         return docIdArr.map(docId => {
             return infoMap.get(docId) || null;
         });
@@ -39,34 +40,20 @@ export default class InfoController {
                 $in: fullTitleArr
             }
         });
+
         const infoMap = new Map<string, InfoDoc | null>();
         infoArr.forEach(info => {
             infoMap.set(info.fullTitle, info);
         });
+
         return fullTitleArr.map(fullTitle => {
             return infoMap.get(fullTitle) || null;
         });
     }
 
-
-    static async setInfoByDoc(doc: Partial<Doc> & Info): Promise<InfoDoc> {
-        const info = new InfoModel<Info>(doc);
-        return await info.save();
-    }
-
     static async updateInfoByDoc(doc: Partial<Doc> & Info): Promise<InfoDoc> {
+        if (doc.type !== 'category') delete doc.categorizedArr;
+        if (doc.type !== 'file') delete doc.fileKey;
         return await InfoModel.findOneAndUpdate({ docId: doc.docId }, doc, {new: true, upsert: true })
-        // const info = await this.getInfoByDocId(doc.docId);
-        // if (!info) {
-        //     return await this.setInfoByDoc(doc);
-        // } else {
-        //     info.fullTitle = doc.fullTitle;
-        //     info.authority = doc.authority;
-        //     info.state = doc.state;
-        //     info.categorizedArr = doc.categorizedArr;
-        //     info.revision = doc.revision;
-        //     return await info.save();
-
-        // }
     }
 }

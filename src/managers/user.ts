@@ -3,7 +3,7 @@ import type { User, UserDoc, UserEmail, UserName } from '../types/user';
 
 import UserController from '../controllers/user.js';
 import LogController from '../controllers/log.js';
-import CommonController from '../controllers/common.js';
+import MetaController from '../controllers/meta.js';
 
 import AuthorityManager from './authority.js';
 import LogManager from './log.js';
@@ -33,7 +33,7 @@ export default class UserManager {
         }
 
         await LogManager.setUserLogByEmailAndAction(email, 'signup', `name: ${name}`);
-        await CommonController.addUserCnt(1);
+        await MetaController.addUserCnt(1);
         return await UserController.setUserByEmailAndName(email, name);
     }
 

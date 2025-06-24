@@ -2,7 +2,6 @@
     import { encodeFullTitle } from 'module-wiki';
     import type { DocLog } from 'module-wiki';
     import { page } from '$app/state';
-    import postReq from '$lib/utils/postReq';
 
     let recentChangedLogs: DocLog[] = $derived.by(() => {
         return removeDuplication(JSON.parse(page.data.logs));
@@ -20,12 +19,6 @@
         });
     }
 
-    // async function getInfoArr(count = 20) {
-    //     const logArr: DocLog[] = await postReq('/api/log', {count});
-    //     // recentHistArr.reverse();
-    //     page.data.logs = JSON.stringify(removeDuplication(logArr));
-    // }
-
     function parseTime(time: Date): string {
         const t = new Date(time);
         if (t.getMinutes() < 10) {
@@ -36,10 +29,6 @@
     }
 </script>
 
-<!-- {#if recentChangedLogs.length === 0}
-	<div></div>
-	<hr />
-{:else} -->
 {#if page.data.user}
     {#each recentChangedLogs as log, i}
         {#if i <= 10}
@@ -55,8 +44,6 @@
         {/if}
     {/each}
 {/if}
-
-<!-- {/if} -->
 
 <style lang="scss">
     div {

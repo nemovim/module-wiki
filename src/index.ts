@@ -19,22 +19,25 @@ import BacklinkManager from './managers/backlink.js';
 import PenaltyManager from './managers/penalty.js';
 import UserManager from './managers/user.js';
 import LogManager from './managers/log.js';
+import StorageManager from './managers/storage.js';
 
 import LogController from './controllers/log.js';
 import UserController from './controllers/user.js';
-import CommonController from './controllers/common.js';
+import MetaController from './controllers/meta.js';
+import MappingController from './controllers/mapping.js';
 
 import TitleUtils from './utils/title.js';
 import WikiTranslator from './utils/translator.js';
 import GeneralUtils from './utils/general.js';
 
 // ================ Initialization ================
-export async function activateWiki(MONGO_URI: string): Promise<boolean> {
+export async function activateWiki(MONGO_URI: string, AWS_BUCKET_NAME: string, AWS_ID: string, AWS_SECRET: string): Promise<boolean> {
     WikiTranslator.initTranslator();
     await DBManager.init(MONGO_URI);
+    await StorageManager.init(AWS_BUCKET_NAME, AWS_ID, AWS_SECRET);
     if (!(await WikiManager.isInitialized())) {
         await mongoose.connection.transaction(async () => {
-            await CommonController.initCommon();
+            await MetaController.initMeta();
 
             const systemUser = AuthorityManager.getSystemUser();
             const systemUserDoc = await UserManager.signupUserByEmailAndName(systemUser.email, systemUser.name);
@@ -44,6 +47,11 @@ export async function activateWiki(MONGO_URI: string): Promise<boolean> {
             await WikiManager.init();
         });
     }
+    return true;
+}
+
+export async function backupWiki(): Promise<boolean> {
+    await DBManager.backup();
     return true;
 }
 
@@ -206,6 +214,11 @@ export async function getRecentWriteLogs(count: number = 10): Promise<Array<DocL
     return await LogController.getRecentWriteLogs(count);
 }
 
+// ================ File Module ================
+export async function uploadFileByFullTitle(fullTitle: string, file: File, markup: string, user: User, comment?: string): Promise<void> {
+    return await WikiManager.uploadFileByFullTitle(fullTitle, file, markup, user, comment);
+}
+
 
 // ================ Other Utils ================
 export function canDo(action: DocAction, docInfo: Info, userGroup: Group): boolean {
@@ -213,7 +226,7 @@ export function canDo(action: DocAction, docInfo: Info, userGroup: Group): boole
 }
 
 export async function getAllFullTitles(): Promise<string[]> {
-    return (await CommonController.getCommon()).fullTitleArr;
+    return await MappingController.getAllFullTitles();
 }
 
 export function encodeFullTitle(fullTitle: string): string {
@@ -239,11 +252,12 @@ export async function createBacklinkHtmlByFullTitle(fullTitle: string): Promise<
 // ================ Types ================
 export type * from './types/authority';
 export type * from './types/backlink';
-export type * from './types/common';
 export type * from './types/doc';
 export type * from './types/hist';
 export type * from './types/info';
 export type * from './types/log';
+export type * from './types/mapping';
+export type * from './types/meta';
 export type * from './types/penalty';
 export type * from './types/user';
 export type { SearchResult } from 'hangul-searcher';

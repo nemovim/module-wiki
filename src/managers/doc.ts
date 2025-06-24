@@ -1,5 +1,5 @@
 import type { Info } from '../types/info';
-import type { Doc, DocId } from '../types/doc';
+import type { CategoryDoc, Doc, DocId, FileDoc } from '../types/doc';
 import type { DocAction } from '../types/log';
 import type { Hist } from '../types/hist';
 import type { User } from '../types/user';
@@ -7,7 +7,7 @@ import type { Group } from '../types/authority';
 
 import InfoController from '../controllers/info.js';
 import HistController from '../controllers/hist.js';
-import CommonController from '../controllers/common.js';
+import MetaController from '../controllers/meta.js';
 import LogController from '../controllers/log.js';
 
 import BacklinkManager from './backlink.js';
@@ -28,6 +28,7 @@ export default class DocManager {
             authority: info.authority,
             state: info.state,
             categorizedArr: info.categorizedArr,
+            fileKey: info.fileKey,
             revision: hist.revision, // Use hist's revision to manage old version of docs.
             markup: hist.markup,
         };
@@ -58,6 +59,8 @@ export default class DocManager {
             return this.#createNewWikiDocByFullTitle(fullTitle);
         } else if (docType === 'category') {
             return this.#createNewCategoryDocByFullTitle(fullTitle);
+        } else if (docType === 'file') {
+            return this.#createNewFileDocByFullTitle(fullTitle);
         } else {
             throw new Error('Unexpected DocType!')
         }
@@ -79,7 +82,6 @@ export default class DocManager {
                 change_state: ['manager', 'dev'],
             },
             state: 'new',
-            categorizedArr: [],
             revision: 1,
             markup: '',
         };
@@ -101,13 +103,34 @@ export default class DocManager {
                 change_state: ['manager', 'dev'],
             },
             state: 'new',
-            categorizedArr: [],
             revision: 1,
             markup: '',
         };
     }
 
-    static #createNewCategoryDocByFullTitle(fullTitle: string): Doc {
+    static #createNewFileDocByFullTitle(fullTitle: string): FileDoc {
+        const docId = GeneralUtils.createNewId() as DocId;
+        return {
+            docId,
+            type: 'file',
+            fullTitle,
+            authority: {
+                read: ['any'],
+                create: ['none'],
+                edit: ['any'],
+                move: ['any'],
+                delete: ['any'],
+                change_authority: ['manager', 'dev'],
+                change_state: ['manager', 'dev'],
+            },
+            state: 'new',
+            filePath: '',
+            revision: 1,
+            markup: '[#[파일]]\n:[**출처**][출처를 입력해 주세요.]\n[**라이선스**][라이선스를 입력해 주세요.]\n[**설명**][파일에 대해 간단한 설명을 입력해 주세요.]:',
+        };
+    }
+
+    static #createNewCategoryDocByFullTitle(fullTitle: string): CategoryDoc {
         const docId = GeneralUtils.createNewId() as DocId;
         return {
             docId,
@@ -137,8 +160,7 @@ export default class DocManager {
 
     static async createDocByDoc(prevDoc: Doc | null, nextDoc: Doc, user: User, comment?: string): Promise<void> {
         nextDoc.state = 'normal';
-        await CommonController.addFullTitle(nextDoc.fullTitle);
-        await CommonController.addDocCnt(1);
+        await MetaController.addDocCnt(1);
         await LogManager.setDocLogByAction('create', prevDoc, nextDoc, user, comment);
         await this.saveDocByDoc(prevDoc, nextDoc);
     }
@@ -160,8 +182,7 @@ export default class DocManager {
         nextDoc.categorizedArr = [];
         nextDoc.revision += 1;
 
-        await CommonController.removeFullTitle(nextDoc.fullTitle);
-        await CommonController.addDocCnt(-1);
+        await MetaController.addDocCnt(-1);
         await LogManager.setDocLogByAction('delete', prevDoc, nextDoc, user, comment);
         await this.saveDocByDoc(prevDoc, nextDoc);
     }
@@ -170,7 +191,6 @@ export default class DocManager {
         const nextDoc = { ...prevDoc }
         nextDoc.fullTitle = newFullTitle;
 
-        await CommonController.updateFullTitle(prevDoc.fullTitle, nextDoc.fullTitle);
         await LogManager.setDocLogByAction('move', prevDoc, nextDoc, user, comment);
         await LogController.updateFullTitlesOfAllDocLogsByDocId(nextDoc.docId, nextDoc.fullTitle);
         await InfoController.updateInfoByDoc(nextDoc);

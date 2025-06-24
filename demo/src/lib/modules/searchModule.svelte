@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto, onNavigate } from '$app/navigation';
     import { page } from '$app/state';
     import HangulSearcher from 'hangul-searcher';
     import { encodeFullTitle } from 'module-wiki';
@@ -11,12 +12,6 @@
 
     let suggestionArr = $state<any[]>([]);
 
-    // async function getInfoArr() {
-    // 	const data = await fetch('/api/search');
-    // 	fullTitleArr = await data.json();
-    // 	suggest(searchWord);
-    // }
-
     function suggest(title: string): void {
         suggestionArr = hangulSearcher.autoComplete(title);
     }
@@ -28,11 +23,11 @@
     }
 
     function search(title: string): void {
-        location.href = `/s/${encodeFullTitle(title)}`;
+        goto(`/s/${encodeFullTitle(title)}`);
     }
 
     function readDoc(title: string): void {
-        location.href = `/r/${encodeFullTitle(title)}`;
+        goto(`/r/${encodeFullTitle(title)}`);
     }
 
     function onBlurSearchDiv(e: FocusEvent): void {
@@ -46,6 +41,11 @@
             suggestionArr = [];
         }
     }
+
+    onNavigate(() => {
+        suggestionArr = [];
+    });
+
 </script>
 
 <div id="search-div">

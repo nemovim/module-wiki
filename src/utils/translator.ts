@@ -4,10 +4,12 @@ import GeneralUtils from './general.js';
 
 export default class WikiTranslator {
     static categoryReg: RegExp;
+    static fileReg: RegExp;
     static externalAnchorReg: RegExp;
 
     static initTranslator(): void {
         this.categoryReg = Translator.createRegExp(/\[#\[/, /(.+?)/, /]](?:\n)?/);
+        this.fileReg = Translator.createRegExp(/\[@\[/, /(.+?)/, /]](?:\n)?/);
         this.externalAnchorReg = Translator.createRegExp(/\[(https)\[/, /(.+?)/, /\]\]/);
         Translator.parseAnchorAttributes = (link: string, name?: string) => {
             if (!name) name = link;
@@ -78,6 +80,7 @@ export default class WikiTranslator {
         return Array.from(categoryTitleSet);
     }
 
+
     static toCategory(content: string): string {
         const categoryTitleArr = this.getCategoryTitleArr(content);
         content = content.replaceAll(this.categoryReg, '');
@@ -97,17 +100,43 @@ export default class WikiTranslator {
         }
     }
 
+    static getFileTitleArr(content: string): string[] {
+        const fileTitleArr: string[] = [];
+        for (let match of content.matchAll(this.fileReg)) {
+            fileTitleArr.push(match[1].split(Translator.splitReg)[0].trim());
+        }
+        return fileTitleArr;
+    }
+
+    static toFile(content: string, filePathArr: Array<string | null>): string {
+        let i = 0;
+        content = content.replace(this.fileReg, (_match, captured) => {
+            let [fileTitle, anchorTitle] = [captured.split(Translator.splitReg)[0].trim(), captured.split(Translator.splitReg).slice(1).join('|').trim()];
+            if (anchorTitle === '') anchorTitle = '파일:'+fileTitle;
+
+            const filePath = filePathArr[i++];
+            if (!filePath) {
+                return `<a title="${anchorTitle}" href="${anchorTitle}">파일:${fileTitle}</a>`;
+            } else {
+                return `<a title="${anchorTitle}" href="${anchorTitle}"><img src="${filePath}" alt="${fileTitle}"/></a>`;
+            }
+        });
+        return content;
+    }
+
     static toEscape(content: string): string {
         return Translator.toEscape(content);
     }
 
-    static translate(content: string, fullTitle?: string): string {
+    static translate(content: string, fullTitle?: string, filePathArr?: Array<string | null>): string {
         content = content.replaceAll(/\r\n/g, '\n');
         let customFunc = (_content: string) => this.toExternalAnchor(_content);
         // If fullTitle is undefined, do not translate the wiki-kind grammar such as category.
         if (fullTitle && fullTitle !== '분류:분류') {
             // Ignore Category for the root category.
             customFunc = (_content) => {
+                if (filePathArr)
+                    _content = this.toFile(_content, filePathArr);
                 _content = this.toExternalAnchor(_content);
                 _content = this.toCategory(_content)
                 return _content;

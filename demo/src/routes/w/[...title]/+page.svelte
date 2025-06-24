@@ -9,6 +9,7 @@
     import { onNavigate } from '$app/navigation';
     import { page } from '$app/state';
     import modifyHtmlByExistenceOfLinks from '$lib/utils/modifyHtml.js';
+    import { enhance } from '$app/forms';
 
     let { data, form } = $props();
 
@@ -17,6 +18,7 @@
     let markup = $state<string>();
     let comment = $state<string>('');
     let previewHTML = $state<string>('');
+    let loading = $state<boolean>(false);
 
     $effect(() => {
         markup = markup === undefined ? doc?.markup || '' : markup;
@@ -44,14 +46,21 @@
     });
 </script>
 
-{#if !form}
     <DocHeader {fullTitle} {doc} pageType={'write'} />
 
     <article id="mainArticle">
         {#if doc?.state === 'hidden'}
         <p>숨겨진 문서는 편집이 불가합니다.</p>
         {:else}
-        <form method="POST">
+        <form method="POST"
+            use:enhance={() => {
+                loading = true;
+                return async ({ update }) => {
+                    await update();
+                    loading = false;
+                };
+            }}
+        >
             <!-- svelte-ignore a11y_autofocus -->
             <textarea
                 id="docMarkup"
@@ -59,25 +68,28 @@
                 bind:value={markup}
                 autofocus
                 name="markup"
+                disabled={loading}
             ></textarea>
             <input
                 id="commentInput"
                 placeholder="comment"
                 bind:value={comment}
                 name="comment"
+                disabled={loading}
             />
-            <button class="hidden" id="saveBtn">저장</button>
+            <button class="hidden" id="saveBtn" disabled={loading}>저장</button>
         </form>
         <div id="btnDiv">
             <button id="previewBtn" onclick={previewDoc}>미리보기</button>
-            <label for="saveBtn" class="button">저장</label>
+            {#if !loading}
+                <label for="saveBtn" class="button">저장</label>
+            {:else}
+                <button class="button" disabled>저장 중...</button>
+            {/if}
         </div>
         <div id="previewDiv" class="kmu">{@html previewHTML}</div>
         {/if}
     </article>
-{:else}
-    <p>Loading...</p>
-{/if}
 
 <style lang="scss">
     @use '../../../lib/style/kmu.scss';

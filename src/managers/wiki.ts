@@ -7,7 +7,7 @@ import HangulSearcher, { type SearchResult } from 'hangul-searcher';
 import { type Change, diffWords } from 'diff';
 
 import InfoController from '../controllers/info.js';
-import CommonController from '../controllers/common.js';
+import MappingController from '../controllers/mapping.js';
 
 import AuthorityManager from './authority.js';
 import CategoryManager from './category.js';
@@ -15,6 +15,7 @@ import DocManager from './doc.js';
 
 import WikiTranslator from '../utils/translator.js';
 import TitleUtils from '../utils/title.js';
+import FileManager from './file.js';
 
 export default class WikiManager {
 
@@ -41,17 +42,29 @@ export default class WikiManager {
     }
 
     static async createHTMLByDoc(doc: Doc): Promise<string> {
-        if (doc.type === 'general' || doc.type === 'wiki' || doc.type === 'file') {
-            return WikiTranslator.translate(doc.markup, doc.fullTitle);
-        } else if (doc.type === 'category') {
-            const categoryMarkup =
-                await CategoryManager.createCategoryMarkupByCategorizedArr(
-                    doc.categorizedArr
-                );
-            return WikiTranslator.translate(doc.markup + categoryMarkup, doc.fullTitle);
-        } else {
+        if (!(doc.type === 'general' || doc.type === 'wiki' || doc.type === 'file' || doc.type === 'category')) {
             throw new Error('Undexpected DocType or hidden doc');
         }
+
+        let categoryMarkup = '';
+
+        if (doc.type === 'category') {
+            categoryMarkup =
+                await CategoryManager.createCategoryMarkupByCategorizedArr(
+                    doc.categorizedArr || []
+                );
+        }
+
+        let fileMarkup = '';
+
+        if (doc.type === 'file') {
+            fileMarkup = `[@[${TitleUtils.getPrefixAndTitleByFullTitle(doc.fullTitle)[1]}]]\n`;
+        }
+
+        const fileTitleArr = WikiTranslator.getFileTitleArr(fileMarkup + doc.markup);
+        const filePathArr = await FileManager.getFilePathsByTitleArr(fileTitleArr);
+
+        return WikiTranslator.translate(fileMarkup + doc.markup + categoryMarkup, doc.fullTitle, filePathArr);
     }
 
     static async readDocByFullTitle(fullTitle: string, user: User, revision = -1): Promise<Doc | null> {
@@ -76,9 +89,12 @@ export default class WikiManager {
         }
     }
 
-    static async #createDocByFullTitle(fullTitle: string, user: User, markup: string, comment?: string): Promise<void> {
+    static async #createDocByFullTitle(fullTitle: string, user: User, markup: string, comment?: string, file?: File): Promise<void> {
         if (TitleUtils.getPrefixAndTitleByFullTitle(fullTitle)[0] === '위키' && !AuthorityManager.canCreateWiki(user.group))
             throw new Error('Cannot create wiki doc');
+
+        if (TitleUtils.getPrefixAndTitleByFullTitle(fullTitle)[1] === '')
+            throw new Error('The title must not be empty!');
 
         const prevDoc = await DocManager.getDocByFullTitle(fullTitle, -1);
         const nextDoc = DocManager.createNewEmptyDocByFullTitle(fullTitle);
@@ -91,8 +107,13 @@ export default class WikiManager {
             throw new Error('The doc already exist!');
         }
 
-        if (!AuthorityManager.canDo('create', nextDoc, user.group))
+        if (!AuthorityManager.canDo('create', nextDoc, user.group) && !file)
             throw new Error('Cannot create');
+
+        if (file) {
+            const fileKey = await FileManager.uploadFileToStorage(file);
+            nextDoc.fileKey = fileKey;
+        }
 
         nextDoc.markup = CategoryManager.checkCategory(markup, fullTitle);
 
@@ -125,6 +146,14 @@ export default class WikiManager {
         if (prevDoc.type === 'category')
             throw new Error('Cannot delete category docs by force');
 
+        console.log(fullTitle)
+        console.log(prevDoc.type)
+        console.log(prevDoc.fileKey)
+
+        if (prevDoc.type === 'file') {
+            await FileManager.deleteFileFromStorage(prevDoc.fileKey as string);
+        }
+
         await CategoryManager.categorizeDoc(prevDoc.docId, prevDoc.markup, '');
         await DocManager.deleteDocByDoc(prevDoc, user, comment);
     }
@@ -144,6 +173,15 @@ export default class WikiManager {
 
         if (await InfoController.getInfoByFullTitle(newFullTitle))
             throw new Error(`Doc named "${newFullTitle}" already exist!`)
+
+        const [newPrefix, newTitle] = TitleUtils.getPrefixAndTitleByFullTitle(newFullTitle);
+        const [oldPrefix, oldTitle] = TitleUtils.getPrefixAndTitleByFullTitle(fullTitle);
+    
+        if (newTitle === '')
+            throw new Error('The new title must not be empty!');
+
+        if (newPrefix !== oldPrefix)
+            throw new Error('The prefix cannot be changed!');
 
         await DocManager.moveDocByDoc(prevDoc, newFullTitle, user, comment);
     }
@@ -199,6 +237,13 @@ export default class WikiManager {
         await DocManager.showDocByDoc(prevDoc, user, comment);
     }
 
+    static async uploadFileByFullTitle(fullTitle: string, file: File, markup: string, user: User, comment?: string): Promise<void> {
+        const [prefix, title] = TitleUtils.getPrefixAndTitleByFullTitle(fullTitle);
+        if (prefix !== '파일') throw new Error('The prefix of the file must be "파일"!');
+
+        await this.#createDocByFullTitle(fullTitle, user, markup, comment, file);
+    }
+
 
     static async compareDocByFullTitle(fullTitle: string, user: User, oldRev: number, newRev: number): Promise<{ diff: Change[], oldDoc: Doc | null, newDoc: Doc | null }> {
         const oldDoc = await this.readDocByFullTitle(fullTitle, user, oldRev);
@@ -211,7 +256,7 @@ export default class WikiManager {
     }
 
     static async searchDoc(searchWord: string): Promise<{ status: 'exact' | 'searched', result: Array<string | SearchResult> }> {
-        const fullTitleArr = (await CommonController.getCommon()).fullTitleArr;
+        const fullTitleArr = (await MappingController.getAllFullTitles());
         const hangulSearcher = new HangulSearcher(fullTitleArr);
         const searchResultArr = hangulSearcher.search(searchWord);
         if (searchResultArr.length !== 0 && searchResultArr[0] === searchWord) {

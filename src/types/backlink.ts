@@ -2,8 +2,9 @@ import type { HydratedDocument } from 'mongoose';
 
 export interface Backlink {
     fullTitle: string,
-    linkedArr: string[],
-    redirectedArr: string[],
+    linkedFromArr: string[],
+    redirectedFromArr: string[],
+    embeddedInArr: string[],
 }
 
 export type BacklinkDoc = HydratedDocument<Backlink>; 

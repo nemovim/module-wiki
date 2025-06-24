@@ -14,6 +14,10 @@ export default class GeneralUtils {
         return crypto.randomBytes(32).toString('base64');
     }
 
+    static createUUID(): string {
+        return crypto.randomUUID();
+    }
+
     static addItemToArrInMap<K, V>(map: Map<K, V[]>, key: K, value: V): void {
         if (map.has(key)) {
             (map.get(key) || []).push(value);

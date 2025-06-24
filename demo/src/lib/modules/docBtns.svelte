@@ -8,6 +8,7 @@
     import RenameBtn from './btns/renameBtn.svelte';
     import RegroupBtn from './btns/regroupBtn.svelte';
     import RestateBtn from './btns/restateBtn.svelte';
+    import { goto } from '$app/navigation';
     let {
         fullTitle,
         doc,
@@ -17,28 +18,24 @@
     let user = $derived(JSON.parse(page.data.user));
 
     function goToWritePage(): void {
-        window.location.href = `/w/${encodeFullTitle(fullTitle)}`;
+        goto(`/w/${encodeFullTitle(fullTitle)}`);
     }
 
     function goToHistoryPage(): void {
-        window.location.href = `/h/${encodeFullTitle(fullTitle)}`;
+        goto(`/h/${encodeFullTitle(fullTitle)}`);
     }
 
     function goToBacklinkPage(): void {
-        window.location.href = `/b/${encodeFullTitle(fullTitle)}`;
+        goto(`/b/${encodeFullTitle(fullTitle)}`);
     }
 
     function goToAuthorityPage() {
-        window.location.href = `/a/${encodeFullTitle(fullTitle)}`;
+        goto(`/a/${encodeFullTitle(fullTitle)}`);
     }
 
     function goToReadPage() {
-        window.location.href = `/r/${encodeFullTitle(fullTitle)}`;
+        goto(`/r/${encodeFullTitle(fullTitle)}`);
     }
-
-    // function goToPenaltyPage() {
-    //     window.location.href = `/p/${encodeFullTitle(fullTitle)}`;
-    // }
 
     function showGrammar(): void {
         alert(`\\ 문법 취소
@@ -74,7 +71,7 @@ __밑줄__
     {:else if pageType === 'error'}
         <button
             onclick={() => {
-                window.history.go(-1);
+                window.history.back();
             }}>돌아가기</button
         >
     {:else if pageType === 'hist'}

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import postReq from '$lib/utils/postReq';
     import { encodeFullTitle } from 'module-wiki';
     import type { Doc } from 'module-wiki';
@@ -25,7 +26,7 @@
 
         if (res.success) {
             alert('이동이 완료되었습니다.');
-            location.href = `/r/${encodeFullTitle(newFullTitle)}`;
+            goto(`/r/${encodeFullTitle(newFullTitle)}`);
         } else {
             alert(res.result.fullTitle + ': ' + res.result.message);
         }
